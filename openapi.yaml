@@ -1,6 +1,305 @@
-...
+openapi: 3.0.3
+info:
+  title: AMLscorer API
+  version: 1.0.0
+  description: |
+    API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
+
+    ## Authentication
+
+    All endpoints require authentication via a Bearer Token.
+
+    A Bearer Token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
+
+    Clients must include the following HTTP header with each API request:
+
+    ```http
+    Authorization: Bearer <your_token_here>
+    ```
+
+    ### How to obtain a token
+
+    - API tokens are issued manually by Apentis during client onboarding.
+    - Each token is associated with an organization and specific access permissions.
+    - Tokens are long-lived but can be revoked at any time for security purposes.
+
+    ### Security Best Practices
+
+    - Store the token securely and do not expose it in public repositories or client-side code.
+    - Rotate the token periodically if instructed by Apentis.
+    - In case of token compromise, contact Apentis support immediately to revoke and regenerate a new token.
+
+    ### Example of using the token in a request
+
+    ```bash
+    curl -X GET "https://api.apentis.eu/business-relations" \
+         -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ```
+
+    If the token is missing or invalid, the API will return a `401 Unauthorized` response.
+
+servers:
+  - url: https://aptma.github.io/amlscorer-api
+    description: GitHub Pages hosting for AMLscorer API documentation
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    BusinessRelation:
+      type: object
+      required:
+        - type
+        - name
+        - relationType
+        - relationStatus
+        - crmCode
+      properties:
+        type:
+          type: string
+          enum: [Association, Company, Family, Foundation, Fund, Household, Insurance company, Insurance contract, Joint ownership, Partnership, Person, Trust]
+          description: Type of business relation.
+        name:
+          type: string
+          description: Full name of the person or organization.
+        firstName:
+          type: string
+          description: Required if the type is Person.
+        lastName:
+          type: string
+          description: Required if the type is Person.
+        maidenName:
+          type: string
+          description: Person's maiden name. Optional.
+        nationality:
+          type: string
+          description: ISO 2-letter nationality code. Applicable for persons.
+        fiscalCountry:
+          type: string
+          description: ISO 2-letter fiscal country code.
+        countryOfOperation:
+          type: string
+          description: ISO 2-letter country of operation. Applicable for companies.
+        countryOfResidence:
+          type: string
+          description: ISO 2-letter country of residence. Applicable for persons.
+        language:
+          type: string
+          description: Language code (ISO 639-1) of the business relation.
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth of the person (YYYY-MM-DD). Optional.
+        phoneNumber:
+          type: string
+          description: Phone number of the business relation. Optional.
+        email:
+          type: string
+          format: email
+          pattern: ^[\w\.-]+@[\w\.-]+\.\w{2,}$
+          description: Email address. Optional. Must be a valid email format.
+        relationType:
+          type: string
+          enum: [Client, Prospect, Contact, Investment]
+          description: Business relation type.
+        relationStatus:
+          type: string
+          enum: [Active, Terminated]
+          description: Status of the business relation.
+        crmCode:
+          type: string
+          description: Unique external identifier of the business relation from the calling system.
+
+    DocumentMetadata:
+      type: object
+      required:
+        - documentName
+        - documentType
+        - issuanceDate
+        - documentIssuer
+      properties:
+        documentName:
+          type: string
+          maxLength: 200
+        documentType:
+          type: string
+          maxLength: 100
+        issuanceDate:
+          type: string
+          format: date
+        expirationDate:
+          type: string
+          format: date
+        documentNumber:
+          type: string
+        isCertifiedTrueCopy:
+          type: boolean
+        documentIssuer:
+          type: string
+          description: ISO 2-letter country code (e.g., 'US', 'FR')
+
+paths:
+  /business-relations:
+    post:
+      summary: Create a new business relation
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelation'
+      responses:
+        '201':
+          description: Business relation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crmCode:
+                    type: string
+                  status:
+                    type: string
+              example:
+                crmCode: "EXT123456"
+                status: "created"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '500':
+          description: Internal Server Error
 
   /business-relations/{crmCode}:
+    put:
+      summary: Update an existing business relation
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelation'
+      responses:
+        '200':
+          description: Business relation updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crmCode:
+                    type: string
+                  status:
+                    type: string
+              example:
+                crmCode: "EXT123456"
+                status: "updated"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation with specified crmCode not found
+        '500':
+          description: Internal Server Error
+
+  /business-relations/{crmCode}/documents:
+    post:
+      summary: Upload a document with file and metadata
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - documentMetadata
+              properties:
+                file:
+                  type: string
+                  format: binary
+                documentMetadata:
+                  type: string
+                  description: JSON string containing document metadata
+      responses:
+        '201':
+          description: Document uploaded successfully
+        '400':
+          description: Bad Request - Invalid input or file
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
+
+  /business-relations/{crmCode}/documents/metadata:
+    post:
+      summary: Submit document metadata without file
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentMetadata'
+      responses:
+        '201':
+          description: Document metadata saved successfully
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
+
+/business-relations/{crmCode}:
     get:
       summary: Retrieve a business relation by crmCode
       tags:
@@ -55,5 +354,36 @@
           description: Unauthorized - Missing or invalid token
         '404':
           description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
+
+    delete:
+      summary: Delete documents associated with a business relation
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+        - in: query
+          name: documentType
+          required: false
+          schema:
+            type: string
+          description: If provided, only documents matching this type will be deleted.
+      responses:
+        '200':
+          description: Documents deleted successfully
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation or documents not found
         '500':
           description: Internal Server Error
