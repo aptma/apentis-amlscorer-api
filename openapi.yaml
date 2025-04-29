@@ -146,6 +146,85 @@ components:
           description: ISO 2-letter country code (e.g., 'US', 'FR')
 
 paths:
+  /business-relations:
+    post:
+      summary: Create a new business relation
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelation'
+      responses:
+        '201':
+          description: Business relation created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crmCode:
+                    type: string
+                  status:
+                    type: string
+              example:
+                crmCode: "EXT123456"
+                status: "created"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '500':
+          description: Internal Server Error
+
+  /business-relations/{crmCode}:
+    put:
+      summary: Update an existing business relation
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelation'
+      responses:
+        '200':
+          description: Business relation updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crmCode:
+                    type: string
+                  status:
+                    type: string
+              example:
+                crmCode: "EXT123456"
+                status: "updated"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation with specified crmCode not found
+        '500':
+          description: Internal Server Error
+
   /business-relations/{crmCode}/documents:
     post:
       summary: Upload a document with file and metadata
