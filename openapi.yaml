@@ -5,10 +5,41 @@ info:
   description: |
     API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
 
-    Authentication via Bearer Token is required for all endpoints.
+    ## Authentication
+
+    All endpoints require authentication via a Bearer Token.
+
+    A Bearer Token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
+
+    Clients must include the following HTTP header with each API request:
+
+    ```http
+    Authorization: Bearer <your_token_here>
+    ```
+
+    ### How to obtain a token
+
+    - API tokens are issued manually by Apentis during client onboarding.
+    - Each token is associated with an organization and specific access permissions.
+    - Tokens are long-lived but can be revoked at any time for security purposes.
+
+    ### Security Best Practices
+
+    - Store the token securely and do not expose it in public repositories or client-side code.
+    - Rotate the token periodically if instructed by Apentis.
+    - In case of token compromise, contact Apentis support immediately to revoke and regenerate a new token.
+
+    ### Example of using the token in a request
+
+    ```bash
+    curl -X GET "https://api.apentis.eu/clients" \
+         -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ```
+
+    If the token is missing or invalid, the API will return a `401 Unauthorized` response.
 
 servers:
-  - url: https://yourusername.github.io/amlscorer-api
+  - url: https://aptma.github.io/amlscorer-api
     description: GitHub Pages hosting for AMLscorer API documentation
 
 security:
