@@ -103,7 +103,8 @@ components:
         email:
           type: string
           format: email
-          description: Email address. Optional.
+          pattern: ^[\w\.-]+@[\w\.-]+\.\w{2,}$
+          description: Email address. Optional. Must be a valid email format.
         relationType:
           type: string
           enum: [Client, Prospect, Contact, Investment]
@@ -156,16 +157,60 @@ paths:
               schema:
                 type: object
                 properties:
-                  relationId:
+                  crmCode:
                     type: string
                   status:
                     type: string
               example:
-                relationId: "abc123"
+                crmCode: "EXT123456"
                 status: "created"
         '400':
           description: Bad Request - Invalid input
         '401':
           description: Unauthorized - Missing or invalid token
+        '500':
+          description: Internal Server Error
+
+  /business-relations/{crmCode}:
+    put:
+      summary: Update an existing business relation
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelation'
+      responses:
+        '200':
+          description: Business relation updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  crmCode:
+                    type: string
+                  status:
+                    type: string
+              example:
+                crmCode: "EXT123456"
+                status: "updated"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation with specified crmCode not found
         '500':
           description: Internal Server Error
