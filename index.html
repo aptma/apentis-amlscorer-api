@@ -70,6 +70,20 @@
     })
     window.ui = ui
   }
+
+  // Replace the Swagger logo with Apentis logo
+  document.addEventListener("DOMContentLoaded", function() {
+    var topbar = document.querySelector('.swagger-ui .topbar');
+    if (topbar) {
+      topbar.innerHTML = `
+        <a href="https://www.apentis.com" target="_blank" style="display:flex; align-items:center; text-decoration:none;">
+          <img src="./apentis-logo.png" alt="Apentis" style="height:40px; margin-right:10px;">
+          <span style="color:white; font-size:20px;">AMLscorer API</span>
+        </a>
+      `;
+    }
+  });
+
   </script>
 </body>
 </html>
