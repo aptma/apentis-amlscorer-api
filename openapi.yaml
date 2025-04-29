@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: |
     API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
-    
+
     Authentication via Bearer Token is required for all endpoints.
 
 servers:
@@ -24,21 +24,31 @@ components:
   schemas:
     Client:
       type: object
+      required:
+        - firstName
+        - lastName
+        - email
       properties:
         firstName:
           type: string
+          description: Client's first name
         lastName:
           type: string
+          description: Client's last name
         email:
           type: string
           format: email
+          description: Client's email address
         birthDate:
           type: string
           format: date
+          description: Date of birth (YYYY-MM-DD)
         nationality:
           type: string
+          description: ISO 2-letter nationality code (e.g., 'US', 'FR')
         documentId:
           type: string
+          description: External document ID reference
 
     UpdateClient:
       type: object
@@ -46,8 +56,10 @@ components:
         email:
           type: string
           format: email
+          description: Updated client email address
         nationality:
           type: string
+          description: Updated nationality code
 
     UploadDocumentResponse:
       type: object
@@ -61,6 +73,8 @@ paths:
   /clients:
     post:
       summary: Create a new client
+      tags:
+        - Clients
       security:
         - bearerAuth: []
       requestBody:
@@ -69,6 +83,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Client'
+            example:
+              firstName: "John"
+              lastName: "Doe"
+              email: "john.doe@example.com"
+              birthDate: "1980-05-15"
+              nationality: "US"
+              documentId: "Passport123456"
       responses:
         '201':
           description: Client created successfully
@@ -81,6 +102,15 @@ paths:
                     type: string
                   status:
                     type: string
+              example:
+                clientId: "abc123"
+                status: "created"
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '500':
+          description: Internal Server Error
 
   /clients/{clientId}:
     put:
