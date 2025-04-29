@@ -39,3 +39,18 @@ The interactive API documentation is available here:
 
 ```http
 Authorization: Bearer <your_token_here>
+```
+
+---
+
+## ⚙️ Technologies
+- OpenAPI 3.0 Specification
+- Swagger UI (self-hosted)
+- GitHub Pages for free hosting
+
+---
+
+## 📄 License
+This project is intended for Apentis internal and partner use only.
+Unauthorized distribution or replication is prohibited.
+
