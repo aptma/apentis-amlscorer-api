@@ -5,10 +5,41 @@ info:
   description: |
     API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
 
-    Authentication via Bearer Token is required for all endpoints.
+    ## Authentication
+
+    All endpoints require authentication via a Bearer Token.
+
+    A Bearer Token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
+
+    Clients must include the following HTTP header with each API request:
+
+    ```http
+    Authorization: Bearer <your_token_here>
+    ```
+
+    ### How to obtain a token
+
+    - API tokens are issued manually by Apentis during client onboarding.
+    - Each token is associated with an organization and specific access permissions.
+    - Tokens are long-lived but can be revoked at any time for security purposes.
+
+    ### Security Best Practices
+
+    - Store the token securely and do not expose it in public repositories or client-side code.
+    - Rotate the token periodically if instructed by Apentis.
+    - In case of token compromise, contact Apentis support immediately to revoke and regenerate a new token.
+
+    ### Example of using the token in a request
+
+    ```bash
+    curl -X GET "https://api.apentis.eu/business-relations" \
+         -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    ```
+
+    If the token is missing or invalid, the API will return a `401 Unauthorized` response.
 
 servers:
-  - url: https://yourusername.github.io/amlscorer-api
+  - url: https://aptma.github.io/amlscorer-api
     description: GitHub Pages hosting for AMLscorer API documentation
 
 security:
@@ -22,156 +53,169 @@ components:
       bearerFormat: JWT
 
   schemas:
-    Client:
+    BusinessRelation:
       type: object
       required:
-        - firstName
-        - lastName
-        - email
+        - type
+        - name
+        - relationType
+        - relationStatus
+        - crmCode
       properties:
+        type:
+          type: string
+          enum: [Association, Company, Family, Foundation, Fund, Household, Insurance company, Insurance contract, Joint ownership, Partnership, Person, Trust]
+          description: Type of business relation.
+        name:
+          type: string
+          description: Full name of the person or organization.
         firstName:
           type: string
-          description: Client's first name
+          description: Required if the type is Person.
         lastName:
           type: string
-          description: Client's last name
-        email:
+          description: Required if the type is Person.
+        maidenName:
           type: string
-          format: email
-          description: Client's email address
+          description: Person's maiden name. Optional.
+        nationality:
+          type: string
+          description: ISO 2-letter nationality code. Applicable for persons.
+        fiscalCountry:
+          type: string
+          description: ISO 2-letter fiscal country code.
+        countryOfOperation:
+          type: string
+          description: ISO 2-letter country of operation. Applicable for companies.
+        countryOfResidence:
+          type: string
+          description: ISO 2-letter country of residence. Applicable for persons.
+        language:
+          type: string
+          description: Language code (ISO 639-1) of the business relation.
         birthDate:
           type: string
           format: date
-          description: Date of birth (YYYY-MM-DD)
-        nationality:
+          description: Date of birth of the person (YYYY-MM-DD). Optional.
+        phoneNumber:
           type: string
-          description: ISO 2-letter nationality code (e.g., 'US', 'FR')
-        documentId:
-          type: string
-          description: External document ID reference
-
-    UpdateClient:
-      type: object
-      properties:
+          description: Phone number of the business relation. Optional.
         email:
           type: string
           format: email
-          description: Updated client email address
-        nationality:
+          pattern: ^[\w\.-]+@[\w\.-]+\.\w{2,}$
+          description: Email address. Optional. Must be a valid email format.
+        relationType:
           type: string
-          description: Updated nationality code
+          enum: [Client, Prospect, Contact, Investment]
+          description: Business relation type.
+        relationStatus:
+          type: string
+          enum: [Active, Terminated]
+          description: Status of the business relation.
+        crmCode:
+          type: string
+          description: Unique external identifier of the business relation from the calling system.
 
-    UploadDocumentResponse:
+    DocumentMetadata:
       type: object
+      required:
+        - documentName
+        - documentType
+        - issuanceDate
+        - documentIssuer
       properties:
-        documentId:
+        documentName:
           type: string
-        status:
+          maxLength: 200
+        documentType:
           type: string
+          maxLength: 100
+        issuanceDate:
+          type: string
+          format: date
+        expirationDate:
+          type: string
+          format: date
+        documentNumber:
+          type: string
+        isCertifiedTrueCopy:
+          type: boolean
+        documentIssuer:
+          type: string
+          description: ISO 2-letter country code (e.g., 'US', 'FR')
 
 paths:
-  /clients:
+  /business-relations/{crmCode}/documents:
     post:
-      summary: Create a new client
+      summary: Upload a document with file and metadata
       tags:
-        - Clients
-      security:
-        - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Client'
-            example:
-              firstName: "John"
-              lastName: "Doe"
-              email: "john.doe@example.com"
-              birthDate: "1980-05-15"
-              nationality: "US"
-              documentId: "Passport123456"
-      responses:
-        '201':
-          description: Client created successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  clientId:
-                    type: string
-                  status:
-                    type: string
-              example:
-                clientId: "abc123"
-                status: "created"
-        '400':
-          description: Bad Request - Invalid input
-        '401':
-          description: Unauthorized - Missing or invalid token
-        '500':
-          description: Internal Server Error
-
-  /clients/{clientId}:
-    put:
-      summary: Update an existing client
+        - Documents
       security:
         - bearerAuth: []
       parameters:
         - in: path
-          name: clientId
+          name: crmCode
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateClient'
-      responses:
-        '200':
-          description: Client updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  clientId:
-                    type: string
-                  status:
-                    type: string
-
-  /clients/{clientId}/documents:
-    post:
-      summary: Upload a document for a client
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: clientId
-          required: true
-          schema:
-            type: string
+          description: Unique external identifier of the business relation.
       requestBody:
         required: true
         content:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - file
+                - documentMetadata
               properties:
                 file:
                   type: string
                   format: binary
-                documentType:
+                documentMetadata:
                   type: string
-                issueDate:
-                  type: string
-                  format: date
+                  description: JSON string containing document metadata
       responses:
         '201':
           description: Document uploaded successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadDocumentResponse'
+        '400':
+          description: Bad Request - Invalid input or file
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
+
+  /business-relations/{crmCode}/documents/metadata:
+    post:
+      summary: Submit document metadata without file
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentMetadata'
+      responses:
+        '201':
+          description: Document metadata saved successfully
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
