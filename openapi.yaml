@@ -32,7 +32,7 @@ info:
     ### Example of using the token in a request
 
     ```bash
-    curl -X GET "https://api.apentis.eu/clients" \
+    curl -X GET "https://api.apentis.eu/business-relations" \
          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     ```
 
@@ -53,44 +53,68 @@ components:
       bearerFormat: JWT
 
   schemas:
-    Client:
+    BusinessRelation:
       type: object
       required:
-        - firstName
-        - lastName
-        - email
+        - type
+        - name
+        - relationType
+        - relationStatus
+        - crmCode
       properties:
+        type:
+          type: string
+          enum: [Association, Company, Family, Foundation, Fund, Household, Insurance company, Insurance contract, Joint ownership, Partnership, Person, Trust]
+          description: Type of business relation.
+        name:
+          type: string
+          description: Full name of the person or organization.
         firstName:
           type: string
-          description: Client's first name
+          description: Required if the type is Person.
         lastName:
           type: string
-          description: Client's last name
-        email:
+          description: Required if the type is Person.
+        maidenName:
           type: string
-          format: email
-          description: Client's email address
+          description: Person's maiden name. Optional.
+        nationality:
+          type: string
+          description: ISO 2-letter nationality code. Applicable for persons.
+        fiscalCountry:
+          type: string
+          description: ISO 2-letter fiscal country code.
+        countryOfOperation:
+          type: string
+          description: ISO 2-letter country of operation. Applicable for companies.
+        countryOfResidence:
+          type: string
+          description: ISO 2-letter country of residence. Applicable for persons.
+        language:
+          type: string
+          description: Language code (ISO 639-1) of the business relation.
         birthDate:
           type: string
           format: date
-          description: Date of birth (YYYY-MM-DD)
-        nationality:
+          description: Date of birth of the person (YYYY-MM-DD). Optional.
+        phoneNumber:
           type: string
-          description: ISO 2-letter nationality code (e.g., 'US', 'FR')
-        documentId:
-          type: string
-          description: External document ID reference
-
-    UpdateClient:
-      type: object
-      properties:
+          description: Phone number of the business relation. Optional.
         email:
           type: string
           format: email
-          description: Updated client email address
-        nationality:
+          description: Email address. Optional.
+        relationType:
           type: string
-          description: Updated nationality code
+          enum: [Client, Prospect, Contact, Investment]
+          description: Business relation type.
+        relationStatus:
+          type: string
+          enum: [Active, Terminated]
+          description: Status of the business relation.
+        crmCode:
+          type: string
+          description: Unique external identifier of the business relation from the calling system.
 
     UploadDocumentResponse:
       type: object
@@ -101,11 +125,11 @@ components:
           type: string
 
 paths:
-  /clients:
+  /business-relations:
     post:
-      summary: Create a new client
+      summary: Create a new business relation
       tags:
-        - Clients
+        - Business Relations
       security:
         - bearerAuth: []
       requestBody:
@@ -113,28 +137,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Client'
+              $ref: '#/components/schemas/BusinessRelation'
             example:
+              type: "Person"
+              name: "John Doe"
               firstName: "John"
               lastName: "Doe"
-              email: "john.doe@example.com"
-              birthDate: "1980-05-15"
               nationality: "US"
-              documentId: "Passport123456"
+              birthDate: "1980-05-15"
+              relationType: "Client"
+              relationStatus: "Active"
+              crmCode: "EXT123456"
       responses:
         '201':
-          description: Client created successfully
+          description: Business relation created successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  clientId:
+                  relationId:
                     type: string
                   status:
                     type: string
               example:
-                clientId: "abc123"
+                relationId: "abc123"
                 status: "created"
         '400':
           description: Bad Request - Invalid input
@@ -142,67 +169,3 @@ paths:
           description: Unauthorized - Missing or invalid token
         '500':
           description: Internal Server Error
-
-  /clients/{clientId}:
-    put:
-      summary: Update an existing client
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: clientId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateClient'
-      responses:
-        '200':
-          description: Client updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  clientId:
-                    type: string
-                  status:
-                    type: string
-
-  /clients/{clientId}/documents:
-    post:
-      summary: Upload a document for a client
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: clientId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-                documentType:
-                  type: string
-                issueDate:
-                  type: string
-                  format: date
-      responses:
-        '201':
-          description: Document uploaded successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadDocumentResponse'
