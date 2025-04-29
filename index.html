@@ -10,6 +10,8 @@
     html { box-sizing: border-box; overflow-y: scroll; }
     *, *:before, *:after { box-sizing: inherit; }
     body { margin: 0; background: #fafafa; }
+    
+    /* New Styles */
     header {
       background-color: #031525; /* dark blue */
       color: white;
@@ -31,19 +33,25 @@
       padding: 10px;
       color: #666;
     }
+    
+    /* 👉 Customize Swagger UI topbar */
+    .swagger-ui .topbar {
+      background-color: #031525; /* Apentis dark blue */
+      border-bottom: 3px solid #FF5A05; /* Apentis orange accent */
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <h1>AMLscorer API</h1>
-    <p>Connect your CRM to Apentis with ease</p>
+    <h1>Apentis AMLscorer API</h1>
+    <p>Connect your CRM to Apentis AMLscorer with ease</p>
   </header>
 
   <div id="swagger-ui"></div>
 
   <footer>
-    &copy; 2025 Apentis S.A. | Secure Compliance Solutions
+    &copy; 2025 Apentis | Innovate. Monitor. Comply.
   </footer>
 
   <script src="swagger-ui-bundle.js" charset="UTF-8"> </script>
