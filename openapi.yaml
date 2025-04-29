@@ -356,7 +356,7 @@ paths:
           description: Not Found - Business relation not found
         '500':
           description: Internal Server Error
-
+    
     delete:
       summary: Delete documents associated with a business relation
       tags:
@@ -379,6 +379,20 @@ paths:
       responses:
         '200':
           description: Documents deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deletedDocumentsCount:
+                    type: integer
+                    description: Number of documents deleted
+                  status:
+                    type: string
+                    example: "success"
+              example:
+                deletedDocumentsCount: 2
+                status: "success"
         '400':
           description: Bad Request - Invalid input
         '401':
