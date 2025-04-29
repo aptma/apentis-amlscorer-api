@@ -2,19 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>AMLscorer API Documentation</title>
+  <title>Apentis AMLscorer API Documentation</title>
   <link rel="stylesheet" type="text/css" href="swagger-ui.css" />
   <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
   <style>
-    html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
+    html { box-sizing: border-box; overflow-y: scroll; }
     *, *:before, *:after { box-sizing: inherit; }
-    body { margin:0; background: #fafafa; }
+    body { margin: 0; background: #fafafa; }
+    header {
+      background-color: #031525; /* dark blue */
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+    header p {
+      margin: 5px 0 0;
+      font-size: 16px;
+      color: #FF5A05; /* orange accent */
+    }
+    footer {
+      text-align: center;
+      font-size: 12px;
+      padding: 10px;
+      color: #666;
+    }
   </style>
 </head>
 
 <body>
+  <header>
+    <h1>AMLscorer API</h1>
+    <p>Connect your CRM to Apentis with ease</p>
+  </header>
+
   <div id="swagger-ui"></div>
+
+  <footer>
+    &copy; 2025 Apentis S.A. | Secure Compliance Solutions
+  </footer>
 
   <script src="swagger-ui-bundle.js" charset="UTF-8"> </script>
   <script src="swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
