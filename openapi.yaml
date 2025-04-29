@@ -1,0 +1,147 @@
+openapi: 3.0.3
+info:
+  title: AMLscorer API
+  version: 1.0.0
+  description: |
+    API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
+    
+    Authentication via Bearer Token is required for all endpoints.
+
+servers:
+  - url: https://yourusername.github.io/amlscorer-api
+    description: GitHub Pages hosting for AMLscorer API documentation
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Client:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        birthDate:
+          type: string
+          format: date
+        nationality:
+          type: string
+        documentId:
+          type: string
+
+    UpdateClient:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        nationality:
+          type: string
+
+    UploadDocumentResponse:
+      type: object
+      properties:
+        documentId:
+          type: string
+        status:
+          type: string
+
+paths:
+  /clients:
+    post:
+      summary: Create a new client
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: Client created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: string
+                  status:
+                    type: string
+
+  /clients/{clientId}:
+    put:
+      summary: Update an existing client
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClient'
+      responses:
+        '200':
+          description: Client updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: string
+                  status:
+                    type: string
+
+  /clients/{clientId}/documents:
+    post:
+      summary: Upload a document for a client
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: clientId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                documentType:
+                  type: string
+                issueDate:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadDocumentResponse'
