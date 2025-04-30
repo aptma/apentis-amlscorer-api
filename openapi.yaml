@@ -39,9 +39,9 @@ info:
 
     If the token is missing or invalid, the API will return a `401 Unauthorized` response.
   contact:
-    name: Apentis Support
+    name: Apentis
     email: support@apentis.com
-    url: https://www.apentis.com
+    url: https://www.apentis.com/contact
 
 servers:
   - url: https://aptma.github.io/amlscorer-api
