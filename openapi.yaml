@@ -39,12 +39,25 @@ info:
 
     If the token is missing or invalid, the API will return a `401 Unauthorized` response.
 
+  contact:
+    name: Apentis Support
+    email: support@apentis.com
+    url: https://www.apentis.com
+  license:
+    name: Proprietary - Apentis Sarl 
+
 servers:
   - url: https://aptma.github.io/amlscorer-api
     description: GitHub Pages hosting for AMLscorer API documentation
 
 security:
   - bearerAuth: []
+
+tags:
+  - name: Business Relations
+    description: Operations related to managing business relations (clients, entities, individuals).
+  - name: Documents
+    description: Uploading, retrieving, and deleting KYC-related documents for business relations.
 
 components:
   securitySchemes:
