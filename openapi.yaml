@@ -224,7 +224,32 @@ paths:
           description: Not Found - Business relation with specified crmCode not found
         '500':
           description: Internal Server Error
-
+    get:
+      summary: Retrieve a business relation by crmCode
+      tags:
+        - Business Relations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      responses:
+        '200':
+          description: Business relation retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessRelation'
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
   /business-relations/{crmCode}/documents:
     post:
       summary: Upload a document with file and metadata
@@ -292,34 +317,6 @@ paths:
           description: Document metadata saved successfully
         '400':
           description: Bad Request - Invalid input
-        '401':
-          description: Unauthorized - Missing or invalid token
-        '404':
-          description: Not Found - Business relation not found
-        '500':
-          description: Internal Server Error
-
-/business-relations/{crmCode}:
-    get:
-      summary: Retrieve a business relation by crmCode
-      tags:
-        - Business Relations
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: crmCode
-          required: true
-          schema:
-            type: string
-          description: Unique external identifier of the business relation.
-      responses:
-        '200':
-          description: Business relation retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BusinessRelation'
         '401':
           description: Unauthorized - Missing or invalid token
         '404':
