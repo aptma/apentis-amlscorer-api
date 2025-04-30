@@ -251,6 +251,7 @@ paths:
           description: Not Found - Business relation not found
         '500':
           description: Internal Server Error
+
   /business-relations/{crmCode}/documents:
     post:
       summary: Upload a document with file and metadata
@@ -293,39 +294,6 @@ paths:
         '500':
           description: Internal Server Error
 
-  /business-relations/{crmCode}/documents/metadata:
-    post:
-      summary: Submit document metadata without file
-      tags:
-        - Documents
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: crmCode
-          required: true
-          schema:
-            type: string
-          description: Unique external identifier of the business relation.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DocumentMetadata'
-      responses:
-        '201':
-          description: Document metadata saved successfully
-        '400':
-          description: Bad Request - Invalid input
-        '401':
-          description: Unauthorized - Missing or invalid token
-        '404':
-          description: Not Found - Business relation not found
-        '500':
-          description: Internal Server Error
-
-  /business-relations/{crmCode}/documents:
     get:
       summary: Retrieve documents associated with a business relation
       tags:
@@ -397,6 +365,39 @@ paths:
           description: Unauthorized - Missing or invalid token
         '404':
           description: Not Found - Business relation or documents not found
+        '500':
+          description: Internal Server Error
+
+
+  /business-relations/{crmCode}/documents/metadata:
+    post:
+      summary: Submit document metadata without file
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentMetadata'
+      responses:
+        '201':
+          description: Document metadata saved successfully
+        '400':
+          description: Bad Request - Invalid input
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
         '500':
           description: Internal Server Error
 
