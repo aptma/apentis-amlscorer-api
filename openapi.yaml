@@ -401,3 +401,62 @@ paths:
           description: Not Found - Business relation or documents not found
         '500':
           description: Internal Server Error
+
+  /business-relations/{crmCode}/documents/multiple:
+    post:
+      summary: Upload multiple documents with files and metadata
+      tags:
+        - Documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - files
+                - metadata
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: One or more document files to upload.
+                metadata:
+                  type: string
+                  description: JSON array string containing document metadata objects for each file.
+      responses:
+        '201':
+          description: Documents uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadedDocumentsCount:
+                    type: integer
+                    description: Number of documents uploaded
+                  status:
+                    type: string
+                    example: "success"
+              example:
+                uploadedDocumentsCount: 3
+                status: "success"
+        '400':
+          description: Bad Request - Invalid input or files
+        '401':
+          description: Unauthorized - Missing or invalid token
+        '404':
+          description: Not Found - Business relation not found
+        '500':
+          description: Internal Server Error
