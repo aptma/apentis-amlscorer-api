@@ -3,7 +3,8 @@ info:
   title: AMLscorer API
   version: 1.0.0
   description: |
-    API for external CRM systems like Salesforce to interact with Apentis AMLscorer.
+    This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis AMLscorer platform.
+
 
     ## Authentication
 
