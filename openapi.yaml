@@ -40,7 +40,7 @@ info:
     ```
 
     If the token is missing or invalid, the API will return a `401 Unauthorized` response.
-    
+
   contact:
     name: Apentis
     email: support@apentis.com
@@ -48,7 +48,7 @@ info:
 
 servers:
   - url: https://aptma.github.io/amlscorer-api/v1.1
-    description: GitHub Pages hosting for AMLscorer API documentation - Production v1.1
+    description: AMLscorer API documentation - Production v1.1
 
 security:
   - bearerAuth: []
