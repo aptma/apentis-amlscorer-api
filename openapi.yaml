@@ -329,8 +329,8 @@ components:
           type: integer
           description: Application-specific or HTTP error code
       example:
-        error: "Unauthorized access"
-        code: 401
+        error: "Internal Server Error"
+        code: 500
 
 paths:
   /business-relations:
@@ -391,6 +391,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '500':
           description: Internal Server Error
           content:
@@ -451,12 +454,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation with specified crmCode not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -505,12 +514,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -578,12 +593,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -634,12 +655,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -698,12 +725,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation or documents not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -758,12 +791,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -859,12 +898,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
@@ -937,6 +982,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '500':
           description: Internal Server Error
           content:
@@ -983,12 +1031,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Not Found - Business relation not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal Server Error
           content:
