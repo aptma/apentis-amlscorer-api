@@ -55,6 +55,8 @@ tags:
     description: Operations related to managing business relations (clients, entities, individuals).
   - name: Documents
     description: Uploading, retrieving, and deleting KYC-related documents for business relations.
+  - name: Business Relation Links
+    description: Manage roles and relationships between two business relations (e.g., person to company).
   - name: AML/KYC Results
     description: Access to the risk rating, acceptance status, PEP/sanction status, and document completeness of a business relation.
 
@@ -280,6 +282,42 @@ components:
           items:
             $ref: '#/components/schemas/DocumentTypeEnum'
           description: List of expired document types.
+
+    BusinessRelationLink:
+      type: object
+      required:
+        - primaryCrmCode
+        - linkedCrmCode
+        - role
+      properties:
+        primaryCrmCode:
+          type: string
+          maxLength: 100
+          description: The crmCode of the main business relation (e.g., a company).
+        linkedCrmCode:
+          type: string
+          maxLength: 100
+          description: The crmCode of the related business relation (e.g., a person).
+        role:
+          type: string
+          enum:
+            - Director
+            - Board member
+            - Trustee
+            - Protector
+            - Settlor
+            - Beneficiary of the trust
+            - Key person
+            - Corporate director
+            - President
+            - Treasurer
+            - Secretary
+            - General partner
+            - Limited partner
+            - Beneficial owner
+            - Member
+            - Shareholder
+          description: The role of the linked business relation in relation to the main one.
 
     ErrorResponse:
       type: object
@@ -823,6 +861,80 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not Found - Business relation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /business-relations/{crmCode}/links:
+    post:
+      summary: Link multiple business relations to a primary one
+      tags:
+  - name: Business Relation Links
+    description: Manage roles and relationships between two business relations (e.g., individual to company).
+        - Business Relation Links
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: The primary business relation (e.g., a company).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/BusinessRelationLink'
+            example:
+              - primaryCrmCode: FB001
+                linkedCrmCode: MZ001
+                role: Director
+              - primaryCrmCode: FB001
+                linkedCrmCode: SH002
+                role: Shareholder
+      responses:
+        '201':
+          description: Links created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  linksCreated:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessRelationLink'
+                example:
+                  status: success
+                  linksCreated:
+                    - primaryCrmCode: FB001
+                      linkedCrmCode: MZ001
+                      role: Director
+                    - primaryCrmCode: FB001
+                      linkedCrmCode: SH002
+                      role: Shareholder
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
