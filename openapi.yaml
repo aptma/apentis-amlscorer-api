@@ -336,7 +336,7 @@ paths:
                   status:
                     type: string
               example:
-                crmCode: "EXT123456"
+                crmCode: "CUST-PL-2024-0001"
                 status: "created"
         '400':
           description: Bad Request - Invalid input
@@ -377,6 +377,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BusinessRelation'
+            example:
+              phoneNumber: "+352 456 789"
+              email: claire.lefebvre@client.eu
       responses:
         '200':
           description: Business relation updated successfully
@@ -437,6 +440,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BusinessRelation'
+              example:
+                type: Person
+                name: Anna Nowak
+                firstName: Anna
+                lastName: Nowak
+                nationality: PL
+                fiscalCountry: PL
+                countryOfResidence: PL
+                language: pl
+                birthDate: 1985-09-12
+                phoneNumber: "+48 123 456 789"
+                email: anna.nowak@example.com
+                relationType: Client
+                relationStatus: Active
+                crmCode: CUST-PL-2024-0001          
         '401':
           description: Unauthorized - Missing or invalid token
           content:
