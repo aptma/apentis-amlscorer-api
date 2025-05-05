@@ -308,6 +308,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BusinessRelation'
+      example:
+        type: Person
+        name: Anna Nowak
+        firstName: Anna
+        lastName: Nowak
+        nationality: PL
+        fiscalCountry: PL
+        countryOfResidence: PL
+        language: en
+        birthDate: 1985-09-12
+        phoneNumber: '+48 123 456 789'
+        email: anna.nowak@example.com
+        relationType: Client
+        relationStatus: Active
+        crmCode: CUST-PL-2024-0001
       responses:
         '201':
           description: Business relation created successfully
