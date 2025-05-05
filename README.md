@@ -21,7 +21,6 @@ The interactive API documentation is available here:
 [👉 View AMLscorer API Documentation](https://aptma.github.io/apentis-amlscorer-api/)
 
 
-
 ---
 
 ## 📁 Main Functional Areas & Endpoints
