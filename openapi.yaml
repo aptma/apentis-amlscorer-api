@@ -194,6 +194,19 @@ components:
             type: string
           description: List of expired document types.
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Short description of the error
+        code:
+          type: integer
+          description: Application-specific or HTTP error code
+      example:
+        error: "Unauthorized access"
+        code: 401
+
 paths:
   /business-relations:
     post:
@@ -547,7 +560,4 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 
