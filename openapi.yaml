@@ -6,7 +6,7 @@ info:
     This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis AMLscorer platform.
 
     👉 For full documentation, usage examples and changelogs, please see:
-    [README on GitHub](https://aptma.github.io/amlscorer-api/README.md)
+    [README on GitHub](https://github.com/aptma/apentis-amlscorer-api?tab=readme-ov-file#readme)
     
     ## Authentication
 
@@ -40,6 +40,7 @@ info:
     ```
 
     If the token is missing or invalid, the API will return a `401 Unauthorized` response.
+    
   contact:
     name: Apentis
     email: support@apentis.com
