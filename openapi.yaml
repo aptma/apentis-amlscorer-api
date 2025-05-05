@@ -194,9 +194,6 @@ components:
             type: string
           description: List of expired document types.
 
-  securitySchemes:
-    bearerAuth:
-
 paths:
   /business-relations:
     post:
