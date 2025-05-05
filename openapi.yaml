@@ -55,6 +55,8 @@ tags:
     description: Operations related to managing business relations (clients, entities, individuals).
   - name: Documents
     description: Uploading, retrieving, and deleting KYC-related documents for business relations.
+  - name: AML/KYC Results
+    description: Access to the risk rating, acceptance status, PEP/sanction status, and document completeness of a business relation.
 
 components:
   securitySchemes:
@@ -155,6 +157,45 @@ components:
         documentIssuer:
           type: string
           description: ISO 2-letter country code (e.g., 'US', 'FR')
+
+    AmlKycResult:
+      type: object
+      properties:
+        amlRiskRating:
+          type: string
+          enum: [low, medium, high]
+          description: AML risk rating assigned to the business relation.
+        relationAcceptanceStatus:
+          type: string
+          enum: [approved, restricted, rejected]
+          description: Final decision on whether the business relation is accepted.
+        isPep:
+          type: boolean
+          description: Whether the business relation is identified as a Politically Exposed Person (PEP).
+        isSanctioned:
+          type: boolean
+          description: Whether the business relation appears on a sanctions list.
+        kycStatus:
+          type: string
+          enum: [to review, reviewed]
+          description: KYC review status of the business relation.
+        lastKycReviewDate:
+          type: string
+          format: date
+          description: Date of the most recent KYC review.
+        missingDocuments:
+          type: array
+          items:
+            type: string
+          description: List of missing document types.
+        expiredDocuments:
+          type: array
+          items:
+            type: string
+          description: List of expired document types.
+
+  securitySchemes:
+    bearerAuth:
 
 paths:
   /business-relations:
@@ -469,3 +510,47 @@ paths:
           description: Not Found - Business relation not found
         '500':
           description: Internal Server Error
+
+  /business-relations/{crmCode}/aml-kyc-result:
+    get:
+      summary: Retrieve AML/KYC results for a business relation
+      tags:
+        - AML/KYC Results
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      responses:
+        '200':
+          description: AML/KYC results retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AmlKycResult'
+        '401':
+          description: Unauthorized - Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Business relation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
