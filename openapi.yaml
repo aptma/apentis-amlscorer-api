@@ -876,8 +876,6 @@ paths:
     post:
       summary: Link multiple business relations to a primary one
       tags:
-  - name: Business Relation Links
-    description: Manage roles and relationships between two business relations (e.g., individual to company).
         - Business Relation Links
       security:
         - bearerAuth: []
