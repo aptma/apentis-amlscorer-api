@@ -69,6 +69,32 @@ The following roles are supported:
 
 ---
 
+
+## 🔁 API Versioning
+
+The AMLscorer API follows a versioning scheme using path prefixes (e.g. `/v1.1/`) and semantic versioning in the documentation metadata.
+
+- **Major versions** (e.g. `/v1.0/`, `/v2.0/`) are used when introducing breaking changes. These may include removing fields, renaming paths, or changing behavior in a non-backward-compatible way.
+- **Minor versions** (e.g. `/v1.1/`, `/v1.2/`) are used when adding non-breaking changes like new endpoints, fields, or optional enhancements.
+- The current version is accessible via: `https://api.apentis.eu/v1.1/...`
+
+Clients should always specify the API version in their requests and monitor changelogs before upgrading to a new major version.
+
+
+---
+
+## 🗓️ Changelog
+
+| Version | Date       | Description                                                                 |
+|---------|------------|-----------------------------------------------------------------------------|
+| 1.0.0   | 2025-02-11 | Initial release with business relations, document uploads, and AML/KYC endpoints. |
+| 1.1.0   | 2025-05-05 | Added support for linking business relations via roles (e.g., Director, Shareholder). |
+
+
+
+---
+
+
 ## 🚀 How to use
 
 1. Obtain your API access token from Apentis.

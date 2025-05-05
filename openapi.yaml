@@ -1,11 +1,13 @@
 openapi: 3.0.3
 info:
   title: AMLscorer API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis AMLscorer platform.
 
-
+    👉 For full documentation, usage examples and changelogs, please see:
+    [README on GitHub](https://aptma.github.io/amlscorer-api/README.md)
+    
     ## Authentication
 
     All endpoints require authentication via a Bearer Token.
@@ -44,8 +46,8 @@ info:
     url: https://www.apentis.com/contact
 
 servers:
-  - url: https://aptma.github.io/amlscorer-api
-    description: GitHub Pages hosting for AMLscorer API documentation
+  - url: https://aptma.github.io/amlscorer-api/v1.1
+    description: GitHub Pages hosting for AMLscorer API documentation - Production v1.1
 
 security:
   - bearerAuth: []
@@ -333,7 +335,7 @@ components:
         code: 500
 
 paths:
-  /business-relations:
+  /v1.1/business-relations:
     post:
       summary: Create a new business relation
       tags:
@@ -401,7 +403,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /business-relations/{crmCode}:
+  /v1.1/business-relations/{crmCode}:
     put:
       summary: Update an existing business relation
       tags:
@@ -533,7 +535,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /business-relations/{crmCode}/documents:
+  /v1.1/business-relations/{crmCode}/documents:
     post:
       summary: Upload a document with file and metadata
       tags:
@@ -745,7 +747,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
 
-  /business-relations/{crmCode}/documents/metadata:
+  /v1.1/business-relations/{crmCode}/documents/metadata:
     post:
       summary: Submit document metadata without file
       tags:
@@ -810,7 +812,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /business-relations/{crmCode}/documents/multiple:
+  /v1.1/business-relations/{crmCode}/documents/multiple:
     post:
       summary: Upload multiple documents with files and metadata
       tags:
@@ -917,7 +919,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /business-relations/{crmCode}/links:
+  /v1.1/business-relations/{crmCode}/links:
     post:
       summary: Link multiple business relations to a primary one
       tags:
@@ -992,7 +994,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /business-relations/{crmCode}/aml-kyc-result:
+  /v1.1/business-relations/{crmCode}/aml-kyc-result:
     get:
       summary: Retrieve AML/KYC results for a business relation
       tags:
