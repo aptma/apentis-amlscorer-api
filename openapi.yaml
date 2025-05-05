@@ -66,13 +66,89 @@ components:
       bearerFormat: JWT
 
   schemas:
+
+    DocumentTypeEnum:
+      type: string
+      enum:
+        - Account valuation
+        - Acknowledgement of receipt - To invest with us
+        - Advisory mandate contract
+        - AML letter
+        - Articles of Incorporation
+        - Bank account details
+        - Bank statement
+        - Business continuity plan (BCP / DRP)
+        - Certificate of accommodation
+        - Certificate of good standing
+        - Certificate of incorporation
+        - Certificate of incumbency
+        - Certificate of insurance
+        - Civil partnership certificate
+        - Client acceptance doc
+        - Client profile
+        - Collateral agreement
+        - Consumer loan agreement
+        - Copy of transaction notices (stocks, bonds,...)
+        - Corporate structure
+        - Death certificate
+        - Declaration of BO
+        - Deed
+        - Discretionary mandate contract
+        - Divorce judgment
+        - Driving licence
+        - Eligibility assessment
+        - Employment certificate
+        - Employment contract
+        - End of relationship doc
+        - File for entering into a business relationship (DER)
+        - Family record book
+        - FATCA classification
+        - Financial statement
+        - Financing plan
+        - General conditions
+        - Health insurance card
+        - ID card
+        - Investment profile
+        - KYC form
+        - KYC report
+        - Life insurance contract
+        - List of authorized signatures
+        - Management agreement
+        - Marriage certificate
+        - MIFID classification
+        - MIFID form
+        - Mortgage loan agreement
+        - Name check
+        - Others
+        - Passport
+        - Pay slip
+        - Phone subscription
+        - Power of attorney
+        - Proof of domicile
+        - Source of wealth documentation
+        - Deliberation of the last Board of Directors
+        - Minutes of the last General Assembly
+        - Trade register extract
+        - Register of beneficial owners
+        - Register of directors
+        - Register of shareholders
+        - Resident card
+        - RTO mandate contract
+        - Separation agreement
+        - Articles of association of a company
+        - Tax notice
+        - Tax registration number
+        - Termination letter
+        - Transaction record (stocks, bonds,...)
+        - Tripartite agreement
+        - Utility Bill
+        - Rapport de visite
+
     BusinessRelation:
       type: object
       required:
         - type
         - name
-        - relationType
-        - relationStatus
         - crmCode
       properties:
         type:
@@ -93,18 +169,23 @@ components:
           description: Person's maiden name. Optional.
         nationality:
           type: string
+          maxLength: 2
           description: ISO 2-letter nationality code. Applicable for persons.
         fiscalCountry:
           type: string
+          maxLength: 2
           description: ISO 2-letter fiscal country code.
         countryOfOperation:
           type: string
+          maxLength: 2
           description: ISO 2-letter country of operation. Applicable for companies.
         countryOfResidence:
           type: string
+          maxLength: 2
           description: ISO 2-letter country of residence. Applicable for persons.
         language:
           type: string
+          maxLength: 2
           description: Language code (ISO 639-1) of the business relation.
         birthDate:
           type: string
@@ -118,16 +199,19 @@ components:
           format: email
           pattern: ^[\w\.-]+@[\w\.-]+\.\w{2,}$
           description: Email address. Optional. Must be a valid email format.
-        relationType:
+        relationshipStatus:
           type: string
           enum: [Client, Prospect, Contact, Investment]
+          default: Client
           description: Business relation type.
         relationStatus:
           type: string
-          enum: [Active, Terminated]
+          enum: [active, terminated]
+          default: Active
           description: Status of the business relation.
         crmCode:
           type: string
+          maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
 
     DocumentMetadata:
@@ -135,28 +219,31 @@ components:
       required:
         - documentName
         - documentType
-        - issuanceDate
-        - documentIssuer
       properties:
         documentName:
           type: string
           maxLength: 200
         documentType:
-          type: string
-          maxLength: 100
+          $ref: '#/components/schemas/DocumentTypeEnum'
         issuanceDate:
           type: string
           format: date
+          description: Date of issuance of the document (YYYY-MM-DD). Optional.
         expirationDate:
           type: string
           format: date
+          description: Date of expiration of the document (YYYY-MM-DD). Optional.
         documentNumber:
           type: string
+          maxLength: 30          
+          description: Document identification number (e.g., passport or ID card number).
         isCertifiedTrueCopy:
           type: boolean
+          description: Indicates whether the uploaded document is a certified true copy.
         documentIssuer:
           type: string
-          description: ISO 2-letter country code (e.g., 'US', 'FR')
+          maxLength: 2
+          description: ISO 2-letter country code of the country that has issued the document (e.g., 'US', 'FR').
 
     AmlKycResult:
       type: object
@@ -182,16 +269,16 @@ components:
         lastKycReviewDate:
           type: string
           format: date
-          description: Date of the most recent KYC review.
+          description: Date of the most recent KYC review (YYYY-MM-DD).
         missingDocuments:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DocumentTypeEnum'
           description: List of missing document types.
         expiredDocuments:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/DocumentTypeEnum'
           description: List of expired document types.
 
     ErrorResponse:
