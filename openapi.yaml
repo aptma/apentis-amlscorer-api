@@ -538,7 +538,7 @@ paths:
 
   /v1.1/business-relations/{crmCode}/documents:
     post:
-      summary: Upload a document with file and metadata
+      summary: Upload one or more documents and associated metadata
       tags:
         - Documents
       security:
@@ -557,38 +557,72 @@ paths:
             schema:
               type: object
               required:
-                - file
-                - documentMetadata
+                - files
+                - metadata
               properties:
-                file:
+                files:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: binary
+                  description: One or more document files to upload (PDF, Word, etc.).
+                metadata:
                   type: string
-                  format: binary
-                documentMetadata:
-                  type: string
-                  description: JSON string containing document metadata
+                  description: |
+                    JSON string representing an array of document metadata.
+                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
+              description: Upload one or more document files and their corresponding metadata entries.
+            encoding:
+              metadata:
+                contentType: application/json
             example:
-              file: (binary file - e.g. passport.pdf)
-              documentMetadata: |
-                {
-                  "documentName": "Passport - Anna Nowak",
-                  "documentType": "Passport",
-                  "issuanceDate": "2020-04-10",
-                  "expirationDate": "2030-04-10",
-                  "documentNumber": "AA4538293",
-                  "isCertifiedTrueCopy": true,
-                  "documentIssuer": "PL"
-                }                  
+              files: [ (binary file 1), (binary file 2) ]
+              metadata: |
+                [
+                  {
+                    "documentName": "ID Card - Anna Nowak",
+                    "documentType": "ID card",
+                    "issuanceDate": "2019-05-01",
+                    "expirationDate": "2029-05-01",
+                    "documentNumber": "ID123456789",
+                    "isCertifiedTrueCopy": true,
+                    "documentIssuer": "PL"
+                  },
+                  {
+                    "documentName": "Proof of Domicile - Anna Nowak",
+                    "documentType": "Proof of domicile",
+                    "issuanceDate": "2023-11-01",
+                    "expirationDate": "2024-11-01",
+                    "documentNumber": "DOM987654321",
+                    "isCertifiedTrueCopy": false,
+                    "documentIssuer": "PL"
+                  }
+                ]                 
       responses:
         '201':
-          description: Document uploaded successfully
+          description: Documents uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadedDocumentsCount:
+                    type: integer
+                  status:
+                    type: string
+                    example: success
+                example:
+                  uploadedDocumentsCount: 2
+                  status: success
         '400':
-          description: Bad Request - Invalid input or file
+          description: Invalid input or metadata count mismatch
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
-                error: "Bad Request - Invalid input or file"
+                error: "Metadata count does not match number of uploaded files"
                 code: 400
         '401':
           description: Unauthorized - Missing or invalid token
@@ -788,113 +822,6 @@ paths:
               example:
                 error: "Bad Request - Invalid input"
                 code: 400
-        '401':
-          description: Unauthorized - Missing or invalid token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Unauthorized - Missing or invalid token"
-                code: 401
-        '404':
-          description: Not Found - Business relation not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Not Found - Business relation with specified crmCode not found"
-                code: 404
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-
-  /v1.1/business-relations/{crmCode}/documents/multiple:
-    post:
-      summary: Upload multiple documents with files and metadata
-      tags:
-        - Documents
-      security:
-        - bearerAuth: []
-      parameters:
-        - in: path
-          name: crmCode
-          required: true
-          schema:
-            type: string
-          description: Unique external identifier of the business relation.
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - files
-                - metadata
-              properties:
-                files:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: One or more document files to upload.
-                metadata:
-                  type: string
-                  description: JSON array string containing document metadata objects for each file.
-            example:
-              files: [ (binary file 1), (binary file 2) ]
-              metadata: |
-                [
-                  {
-                    "documentName": "ID Card - Anna Nowak",
-                    "documentType": "ID card",
-                    "issuanceDate": "2019-05-01",
-                    "expirationDate": "2029-05-01",
-                    "documentNumber": "ID123456789",
-                    "isCertifiedTrueCopy": true,
-                    "documentIssuer": "PL"
-                  },
-                  {
-                    "documentName": "Proof of Domicile - Anna Nowak",
-                    "documentType": "Proof of domicile",
-                    "issuanceDate": "2023-11-01",
-                    "expirationDate": "2024-11-01",
-                    "documentNumber": "DOM987654321",
-                    "isCertifiedTrueCopy": false,
-                    "documentIssuer": "PL"
-                  }
-                ]
-      responses:
-        '201':
-          description: Documents uploaded successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  uploadedDocumentsCount:
-                    type: integer
-                    description: Number of documents uploaded
-                  status:
-                    type: string
-                    example: "success"
-              example:
-                uploadedDocumentsCount: 3
-                status: "success"
-        '400':
-          description: Bad Request - Invalid input or files
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'   
-              example:
-                error: "Bad Request - Invalid input or files"
-                code: 400       
         '401':
           description: Unauthorized - Missing or invalid token
           content:
