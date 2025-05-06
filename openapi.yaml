@@ -597,13 +597,33 @@ paths:
                   type: string
                   description: |
                     JSON string representing an array of document metadata.
-                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
-            examples:
-              applicationExample:
-                $ref: '#/components/examples/UploadMultipleDocumentsExample'            
+                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.      
             encoding:
               metadata:
-                contentType: application/json                
+                contentType: application/json  
+            example:
+              files: [passport.pdf, proof_of_domicile.pdf]
+              metadata: |
+                [
+                  {
+                    "documentName": "Passport - Anna Nowak",
+                    "documentType": "Passport",
+                    "issuanceDate": "2019-05-01",
+                    "expirationDate": "2029-05-01",
+                    "documentNumber": "PA123456789",
+                    "isCertifiedTrueCopy": true,
+                    "documentIssuer": "PL"
+                  },
+                  {
+                    "documentName": "Proof of Domicile - Anna Nowak",
+                    "documentType": "Proof of domicile",
+                    "issuanceDate": "2023-11-01",
+                    "expirationDate": "2024-11-01",
+                    "documentNumber": "DOM987654321",
+                    "isCertifiedTrueCopy": false,
+                    "documentIssuer": "PL"
+                  }
+                ]                              
       responses:
         '201':
           description: Documents uploaded successfully
