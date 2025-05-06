@@ -572,20 +572,21 @@ paths:
                   description: |
                     JSON string representing an array of document metadata.
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
-              description: Upload one or more document files and their corresponding metadata entries.
-            encoding:
-              metadata:
-                contentType: application/json
-            example:
-              files: [ (binary file 1), (binary file 2) ]
-              metadata: |
+              description: |
+                Upload one or more document files and their corresponding metadata entries.
+
+                ### Example:
+                - `files[]`: [passport.pdf, proof_of_domicile.pdf]
+                - `metadata` (as JSON string):
+
+                ```json
                 [
                   {
-                    "documentName": "ID Card - Anna Nowak",
-                    "documentType": "ID card",
+                    "documentName": "Passport - Anna Nowak",
+                    "documentType": "Passport",
                     "issuanceDate": "2019-05-01",
                     "expirationDate": "2029-05-01",
-                    "documentNumber": "ID123456789",
+                    "documentNumber": "PA123456789",
                     "isCertifiedTrueCopy": true,
                     "documentIssuer": "PL"
                   },
@@ -598,7 +599,11 @@ paths:
                     "isCertifiedTrueCopy": false,
                     "documentIssuer": "PL"
                   }
-                ]                 
+                ]
+                ```
+            encoding:
+              metadata:
+                contentType: application/json                
       responses:
         '201':
           description: Documents uploaded successfully
