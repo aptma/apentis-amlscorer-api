@@ -572,35 +572,33 @@ paths:
                   description: |
                     JSON string representing an array of document metadata.
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
-              description: |
-                Upload one or more document files and their corresponding metadata entries.
 
-                ### Example:
-                - `files[]`: [passport.pdf, proof_of_domicile.pdf]
-                - `metadata` (as JSON string):
+                    ### Example:
+                    - `files[]`: [passport.pdf, proof_of_domicile.pdf]
+                    - `metadata` (as JSON string):
 
-                ```json
-                [
-                  {
-                    "documentName": "Passport - Anna Nowak",
-                    "documentType": "Passport",
-                    "issuanceDate": "2019-05-01",
-                    "expirationDate": "2029-05-01",
-                    "documentNumber": "PA123456789",
-                    "isCertifiedTrueCopy": true,
-                    "documentIssuer": "PL"
-                  },
-                  {
-                    "documentName": "Proof of Domicile - Anna Nowak",
-                    "documentType": "Proof of domicile",
-                    "issuanceDate": "2023-11-01",
-                    "expirationDate": "2024-11-01",
-                    "documentNumber": "DOM987654321",
-                    "isCertifiedTrueCopy": false,
-                    "documentIssuer": "PL"
-                  }
-                ]
-                ```
+                    ```json
+                    [
+                      {
+                        "documentName": "Passport - Anna Nowak",
+                        "documentType": "Passport",
+                        "issuanceDate": "2019-05-01",
+                        "expirationDate": "2029-05-01",
+                        "documentNumber": "PA123456789",
+                        "isCertifiedTrueCopy": true,
+                        "documentIssuer": "PL"
+                      },
+                      {
+                        "documentName": "Proof of Domicile - Anna Nowak",
+                        "documentType": "Proof of domicile",
+                        "issuanceDate": "2023-11-01",
+                        "expirationDate": "2024-11-01",
+                        "documentNumber": "DOM987654321",
+                        "isCertifiedTrueCopy": false,
+                        "documentIssuer": "PL"
+                      }
+                    ]
+                    ```
             encoding:
               metadata:
                 contentType: application/json                
