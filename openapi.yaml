@@ -70,33 +70,6 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-  examples:
-    UploadMultipleDocumentsExample:
-      summary: Upload passport and proof of domicile
-      value:
-        files: [passport.pdf, proof_of_domicile.pdf]
-        metadata: |
-          [
-            {
-              "documentName": "Passport - Anna Nowak",
-              "documentType": "Passport",
-              "issuanceDate": "2019-05-01",
-              "expirationDate": "2029-05-01",
-              "documentNumber": "PA123456789",
-              "isCertifiedTrueCopy": true,
-              "documentIssuer": "PL"
-            },
-            {
-              "documentName": "Proof of Domicile - Anna Nowak",
-              "documentType": "Proof of domicile",
-              "issuanceDate": "2023-11-01",
-              "expirationDate": "2024-11-01",
-              "documentNumber": "DOM987654321",
-              "isCertifiedTrueCopy": false,
-              "documentIssuer": "PL"
-            }
-          ]
-
   schemas:
     DocumentTypeEnum:
       type: string
@@ -600,6 +573,8 @@ paths:
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.  
                     Example:
                     ```json
+                    [passport.pdf, proof_of_domicile.pdf]
+                    
                     [
                       {
                         "documentName": "Passport - Anna Nowak",
