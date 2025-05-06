@@ -567,7 +567,7 @@ paths:
                     format: binary
                   description: |
                     One or more document files to upload (PDF, Word, etc.). 
-                       
+
                     Example: [passport.pdf, proof_of_domicile.pdf]
                 metadata:
                   type: string
@@ -784,7 +784,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
 
-  /v1.1/business-relations/{crmCode}/documents/metadata:
+  /v1.1/business-relations/{crmCode}/documents/metadata-only:
     post:
       summary: Submit document metadata without file
       tags:
