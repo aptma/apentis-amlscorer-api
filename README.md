@@ -36,15 +36,15 @@ The interactive API documentation is available here:
 - `GET /business-relations/{crmCode}/documents`: Retrieve all documents for a business relation
 - `DELETE /business-relations/{crmCode}/documents`: Delete all or filtered documents by type
 
-### 🔍 AML / KYC Status
+### 🔍 AML / KYC status
 - `GET /business-relations/{crmCode}/aml-kyc-result`: Retrieve AML risk rating, acceptance status, KYC review info, and document completeness
 
-### 🔗 Relations Between Business Relations
+### 🔗 Relations between business relations
 - `POST /business-relations/{crmCode}/links`: Link one business relation to others (e.g. Person → Company) with a specific role (e.g. Director, Shareholder)
 
 ---
 
-## 🧩 Roles Supported in Links Between Relations
+## 🧩 Roles supported in links between relations
 
 The following roles are supported:
 - Director
@@ -79,7 +79,7 @@ A full list of allowed role mappings is provided in this reference:
 ---
 
 
-## 🔁 API Versioning
+## 🔁 API versioning
 
 The AMLscorer API follows a versioning scheme using path prefixes (e.g. `/v1.1/`) and semantic versioning in the documentation metadata.
 
