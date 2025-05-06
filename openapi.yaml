@@ -571,6 +571,7 @@ paths:
                   description: |
                     JSON string representing an array of document metadata.  
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.  
+                      
                     Example:
                     ```json
                     [passport.pdf, proof_of_domicile.pdf]
