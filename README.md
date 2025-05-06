@@ -64,6 +64,17 @@ The following roles are supported:
 - Member
 - Shareholder
 
+Not all roles are valid between all types of business relations. The allowed roles depend on the **type of each party** in the relationship (primary and secondary `crmCode`).
+
+Each role you submit must match a valid combination of:
+- **Primary entity type**
+- **Linked entity type**
+- **Role**
+
+A full list of allowed role mappings is provided in this reference:
+- [View role compatibility table (Markdown)](./docs/role_mapping.md)
+- [Download as CSV](./docs/role_mapping.csv)
+
 
 ---
 

@@ -597,8 +597,9 @@ paths:
                   type: string
                   description: |
                     JSON string representing an array of document metadata.  
-                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
+                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.  
                     Example:
+                    ```json
                     [
                       {
                         "documentName": "Passport - Anna Nowak",
@@ -618,7 +619,8 @@ paths:
                         "isCertifiedTrueCopy": false,
                         "documentIssuer": "PL"
                       }
-                    ] 
+                    ]
+                    ```
             encoding:
               metadata:
                 contentType: application/json                               
