@@ -596,10 +596,9 @@ paths:
                 metadata:
                   type: string
                   description: |
-                    JSON string representing an array of document metadata.
+                    JSON string representing an array of document metadata.  
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
-
-                    ### Example:
+                    Example:
                     [
                       {
                         "documentName": "Passport - Anna Nowak",
