@@ -565,17 +565,18 @@ paths:
                   items:
                     type: string
                     format: binary
-                  description: One or more document files to upload (PDF, Word, etc.).
+                  description: |
+                    One or more document files to upload (PDF, Word, etc.). 
+                       
+                    Example: [passport.pdf, proof_of_domicile.pdf]
                 metadata:
                   type: string
                   description: |
                     JSON string representing an array of document metadata.  
                     ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.  
-                      
+
                     Example:
                     ```json
-                    [passport.pdf, proof_of_domicile.pdf]
-                    
                     [
                       {
                         "documentName": "Passport - Anna Nowak",
