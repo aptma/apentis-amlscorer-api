@@ -346,7 +346,7 @@ components:
             - Beneficial owner
             - Member
             - Shareholder
-          description: The role of the linked business relation in relation to the main one.
+          description: The role of the linked business relation in relation to the main one. Please see the README file to see authorized links between entities.
 
     ErrorResponse:
       type: object
