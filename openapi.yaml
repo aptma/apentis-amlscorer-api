@@ -10,9 +10,7 @@ info:
     
     ## Authentication
 
-    All endpoints require authentication via a Bearer Token.
-
-    A Bearer Token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
+    All endpoints require authentication via a Bearer token. A Bearer token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
 
     Clients must include the following HTTP header with each API request:
 
@@ -26,7 +24,7 @@ info:
     - Each token is associated with an organization and specific access permissions.
     - Tokens are long-lived but can be revoked at any time for security purposes.
 
-    ### Security Best Practices
+    ### Security best practices
 
     - Store the token securely and do not expose it in public repositories or client-side code.
     - Rotate the token periodically if instructed by Apentis.
