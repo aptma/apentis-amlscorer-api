@@ -1052,18 +1052,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid input"
+                code: 400
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         '404':
           description: Unknown investor or fund
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
         '500':
           description: Internal server error
           content:
