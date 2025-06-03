@@ -33,7 +33,7 @@ info:
     ### Example of using the token in a request
 
     ```bash
-    curl -X GET "https://api.apentis.eu/business-relations" \
+    curl -X GET "https://api.apentis.com/business-relations" \
          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     ```
 
@@ -45,7 +45,7 @@ info:
     url: https://www.apentis.com/contact
 
 servers:
-  - url: https://aptma.github.io/amlscorer-api/v1.1
+  - url: https://api.apentis.com/v1.1
     description: Apentis API documentation - Production v1.1
 
 security:

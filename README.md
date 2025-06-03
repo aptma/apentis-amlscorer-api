@@ -18,7 +18,7 @@ Authorization: Bearer <your_token_here>
 
 The interactive API documentation is available here:
 
-[👉 View APENTIS API Documentation](https://aptma.github.io/apentis-amlscorer-api/)
+[👉 View APENTIS API Documentation](https://api.apentis.com/)
 
 
 ---
