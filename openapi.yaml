@@ -1009,66 +1009,66 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-    /v1.1/investors-registry:
-      post:
-        summary: Register a new fund commitment by an investor
-        tags:
-          - Investors Registry
-        security:
-          - bearerAuth: []
-        parameters:
-          - in: path
-            name: crmCode
-            required: true
-            schema:
-              type: string
-            description: crmCode of the investor (must match an existing business relation)
-        requestBody:
+  /v1.1/investors-registry:
+    post:
+      summary: Register a new fund commitment by an investor
+      tags:
+        - Investors Registry
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
           required: true
+          schema:
+            type: string
+          description: crmCode of the investor (must match an existing business relation)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvestorCommitment'
+            example:
+              fundId: FUND456
+              commitmentAmount: 250000.00
+              commitmentCurrency: EUR
+              commitmentDate: 2024-12-01
+      responses:
+        '201':
+          description: Commitment successfully recorded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InvestorCommitment'
-              example:
-                fundId: FUND456
-                commitmentAmount: 250000.00
-                commitmentCurrency: EUR
-                commitmentDate: 2024-12-01
-        responses:
-          '201':
-            description: Commitment successfully recorded
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    status:
-                      type: string
-                      example: success
-                    message:
-                      type: string
-                      example: Commitment registered
-          '400':
-            description: Invalid input
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ErrorResponse'
-          '401':
-            description: Unauthorized
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ErrorResponse'
-          '404':
-            description: Unknown investor or fund
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ErrorResponse'
-          '500':
-            description: Internal server error
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ErrorResponse'               
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Commitment registered
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Unknown investor or fund
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'               
