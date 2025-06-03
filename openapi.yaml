@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: APENTIS API
+  title: Apentis API
   version: 1.1.0
   description: |
     This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis platform.
@@ -48,7 +48,7 @@ info:
 
 servers:
   - url: https://aptma.github.io/amlscorer-api/v1.1
-    description: APENTIS API documentation - Production v1.1
+    description: Apentis API documentation - Production v1.1
 
 security:
   - bearerAuth: []
