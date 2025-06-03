@@ -1,14 +1,14 @@
-# AMLscorer API documentation
+# APENTIS API documentation
 
-Welcome to the **AMLscorer API** documentation.
+Welcome to the **APENTIS API** documentation.
 
-This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to securely integrate with the Apentis AMLscorer platform to manage KYC/AML-related data and documents.
+This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to securely integrate with the Apentis platform to manage KYC/AML-related data and documents.
 
-The API is designed to integrate seamlessly with the Apentis AMLscorer backend, using secure authentication methods.
+The API is designed to integrate seamlessly with the Apentis backend, using secure authentication methods.
 
 ## 🔐 Authentication
 
-All endpoints are protected by a Bearer Token. Clients must pass the token in the Authorization header:
+All endpoints are protected by a Bearer token. Clients must pass the token in the Authorization header:
 
 ```http
 Authorization: Bearer <your_token_here>
@@ -18,29 +18,33 @@ Authorization: Bearer <your_token_here>
 
 The interactive API documentation is available here:
 
-[👉 View AMLscorer API Documentation](https://aptma.github.io/apentis-amlscorer-api/)
+[👉 View APENTIS API Documentation](https://aptma.github.io/apentis-amlscorer-api/)
 
 
 ---
 
 ## 📁 Main Functional Areas & Endpoints
 
-### 🧑‍💼 Business Relations
+### Business Relations
 - `POST /business-relations`: Create a new business relation
 - `PUT /business-relations/{crmCode}`: Update an existing business relation
 - `GET /business-relations/{crmCode}`: Retrieve a business relation by its crmCode
 
-### 📄 Documents
+### Documents
 - `POST /business-relations/{crmCode}/documents`: Upload done or ocuments with associated metadata 
 - `POST /business-relations/{crmCode}/documents/metadata-only`: Submit document metadata only (no file)
 - `GET /business-relations/{crmCode}/documents`: Retrieve all documents for a business relation
 - `DELETE /business-relations/{crmCode}/documents`: Delete all or filtered documents by type
 
-### 🔍 AML / KYC status
+### AML / KYC status
 - `GET /business-relations/{crmCode}/aml-kyc-result`: Retrieve AML risk rating, acceptance status, KYC review info, and document completeness
 
-### 🔗 Relations between business relations
+### Relations between business relations
 - `POST /business-relations/{crmCode}/links`: Link one business relation to others (e.g. Person → Company) with a specific role (e.g. Director, Shareholder)
+
+### Relations between business relations
+- `POST /business-relations/{crmCode}/investor-commitments`: Register or update a fund commitment by an investor
+
 
 ---
 
@@ -81,7 +85,7 @@ A full list of allowed role mappings is provided in this reference:
 
 ## 🔁 API versioning
 
-The AMLscorer API follows a versioning scheme using path prefixes (e.g. `/v1.1/`) and semantic versioning in the documentation metadata.
+The APENTIS API follows a versioning scheme using path prefixes (e.g. `/v1.1/`) and semantic versioning in the documentation metadata.
 
 - **Major versions** (e.g. `/v1.0/`, `/v2.0/`) are used when introducing breaking changes. These may include removing fields, renaming paths, or changing behavior in a non-backward-compatible way.
 - **Minor versions** (e.g. `/v1.1/`, `/v1.2/`) are used when adding non-breaking changes like new endpoints, fields, or optional enhancements.
