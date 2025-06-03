@@ -366,7 +366,7 @@ paths:
     post:
       summary: Create a new business relation
       tags:
-        - Business Relations
+        - Business relations
       security:
         - bearerAuth: []
       requestBody:
@@ -434,7 +434,7 @@ paths:
     put:
       summary: Update an existing business relation
       tags:
-        - Business Relations
+        - Business relations
       security:
         - bearerAuth: []
       parameters:
@@ -505,7 +505,7 @@ paths:
     get:
       summary: Retrieve a business relation by crmCode
       tags:
-        - Business Relations
+        - Business relations
       security:
         - bearerAuth: []
       parameters:
@@ -880,7 +880,7 @@ paths:
     post:
       summary: Link multiple business relations to a primary one
       tags:
-        - Business Relation Links
+        - Business relation links
       security:
         - bearerAuth: []
       parameters:
@@ -955,7 +955,7 @@ paths:
     get:
       summary: Retrieve AML/KYC results for a business relation
       tags:
-        - AML/KYC Results
+        - AML/KYC results
       security:
         - bearerAuth: []
       parameters:
@@ -1013,7 +1013,7 @@ paths:
     post:
       summary: Register a new fund commitment by an investor
       tags:
-        - Investors Registry
+        - Investors registry
       security:
         - bearerAuth: []
       parameters:
