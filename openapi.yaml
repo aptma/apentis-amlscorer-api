@@ -210,7 +210,7 @@ components:
           description: Business relation type.
         relationStatus:
           type: string
-          enum: [active, terminated]
+          enum: [Active, Terminated]
           default: Active
           description: Status of the business relation.
         crmCode:
