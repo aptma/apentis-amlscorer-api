@@ -31,7 +31,7 @@ The interactive API documentation is available here:
 - `GET /business-relations/{crmCode}`: Retrieve a business relation by its crmCode
 
 ### Documents
-- `POST /business-relations/{crmCode}/documents`: Upload done or ocuments with associated metadata 
+- `POST /business-relations/{crmCode}/documents`: Upload one or more documents with associated metadata
 - `POST /business-relations/{crmCode}/documents/metadata-only`: Submit document metadata only (no file)
 - `GET /business-relations/{crmCode}/documents`: Retrieve all documents for a business relation
 - `DELETE /business-relations/{crmCode}/documents`: Delete all or filtered documents by type
