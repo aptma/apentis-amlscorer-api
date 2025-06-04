@@ -60,7 +60,7 @@ tags:
     description: Manage roles and relationships between two business relations (e.g., person to company).
   - name: AML/KYC results
     description: Access to the risk rating, acceptance status, PEP/sanction status, and document completeness of a business relation.
-  - name: Investors registry
+  - name: Investor commitments
     description: Endpoints related to investor fund commitments
 
 components:
@@ -1007,11 +1007,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /v1.1/investors-registry:
+  /v1.1/business-relations/{crmCode}/investor-commitments:
     post:
       summary: Register a new fund commitment by an investor
       tags:
-        - Investors registry
+        - Investor commitments
       security:
         - bearerAuth: []
       parameters:
