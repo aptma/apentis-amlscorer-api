@@ -7,7 +7,7 @@ info:
 
     👉 For full documentation, usage examples and changelogs, please see:
     [README on GitHub](https://github.com/aptma/apentis-amlscorer-api?tab=readme-ov-file#readme)
-    
+
     ## Authentication
 
     All endpoints require authentication via a Bearer token. A Bearer token is a security token that grants access to protected resources. It must be included in the HTTP Authorization header of each API request. The server validates the token to authenticate the client making the request.
@@ -264,7 +264,7 @@ components:
           description: Date of expiration of the document (YYYY-MM-DD). Optional.
         documentNumber:
           type: string
-          maxLength: 30          
+          maxLength: 30
           description: Document identification number (e.g., passport or ID card number).
         isCertifiedTrueCopy:
           type: boolean
@@ -534,7 +534,7 @@ paths:
                 email: anna.nowak@example.com
                 relationType: Client
                 relationStatus: Active
-                crmCode: CUST-PL-2024-0001          
+                crmCode: CUST-PL-2024-0001
         '401':
           description: Unauthorized - Missing or invalid token
           content:
@@ -591,14 +591,14 @@ paths:
                     type: string
                     format: binary
                   description: |
-                    One or more document files to upload (PDF, Word, etc.). 
+                    One or more document files to upload (PDF, Word, etc.).
 
                     Example: [passport.pdf, proof_of_domicile.pdf]
                 metadata:
                   type: string
                   description: |
-                    JSON string representing an array of document metadata.  
-                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.  
+                    JSON string representing an array of document metadata.
+                    ⚠️ The number of metadata entries **must exactly match** the number of uploaded files in `files[]`.
 
                     Example:
                     ```json
@@ -625,7 +625,7 @@ paths:
                     ```
             encoding:
               metadata:
-                contentType: application/json                               
+                contentType: application/json
       responses:
         '201':
           description: Documents uploaded successfully
@@ -737,7 +737,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-    
+
     delete:
       summary: Delete documents associated with a business relation
       tags:
