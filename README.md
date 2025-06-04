@@ -125,6 +125,16 @@ Authorization: Bearer <your_token_here>
 - Swagger UI (self-hosted)
 - GitHub Pages for free hosting
 
+## 🧪 Testing
+
+Automated tests verify that the `openapi.yaml` specification is valid. To run
+them, install the test dependencies and execute `pytest`:
+
+```bash
+pip install openapi-spec-validator pytest
+pytest
+```
+
 ---
 
 ## 📄 License
