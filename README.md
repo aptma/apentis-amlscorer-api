@@ -42,7 +42,7 @@ The interactive API documentation is available here:
 ### Relations between business relations
 - `POST /business-relations/{crmCode}/links`: Link one business relation to others (e.g. Person → Company) with a specific role (e.g. Director, Shareholder)
 
-### Relations between business relations
+### Investor commitments
 - `POST /business-relations/{crmCode}/investor-commitments`: Register or update a fund commitment by an investor
 
 
