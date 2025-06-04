@@ -56,6 +56,9 @@ The interactive API documentation is available here:
 ### Investor commitments
 - `POST /business-relations/{crmCode}/investor-commitments`: Register or update a fund commitment by an investor
 
+### Cash transactions 
+- `POST /cash-transactions`: Submit one or more client cash transactions for cashflow monitoring and suspicious activity detection
+
 
 ---
 

@@ -63,7 +63,9 @@ tags:
   - name: AML/KYC results
     description: Access to the risk rating, acceptance status, PEP/sanction status, and document completeness of a business relation.
   - name: Investor commitments
-    description: Endpoints related to investor fund commitments
+    description: Endpoints related to investor fund commitments.
+  - name: Cash transactions
+    description: Endpoints for submitting and monitoring cash movements related to AML processes.
 
 components:
   securitySchemes:
@@ -347,6 +349,64 @@ components:
             - Member
             - Shareholder
           description: The role of the linked business relation in relation to the main one. Please see the README file to see authorized links between entities.
+
+    CashTransaction:
+      type: object
+      required:
+        - crmCode
+        - transactionDate
+        - portfolioId
+        - currency
+        - amount
+        - transactionType
+        - externalTransactionId
+      properties:
+        crmCode:
+          type: string
+          maxLength: 100
+          description: Business relation executing the transaction
+        transactionDate:
+          type: string
+          format: date
+          description: Transaction date in YYYY-MM-DD format
+        portfolioId:
+          type: string
+          maxLength: 100
+          description: Identifier of the account or portfolio
+        currency:
+          type: string
+          pattern: "^[A-Z]{3}$"
+          description: ISO 4217 currency code (e.g., EUR, USD)
+        amount:
+          type: number
+          format: double
+          description: Net cash amount of the transaction
+        transactionType:
+          type: string
+          enum:
+            - dividend
+            - coupon
+            - interest-payment
+            - bond-reimbursement
+            - forex
+            - cash-transfer
+            - fee
+            - tax
+            - time-deposit
+            - loan
+            - margin-call
+            - capital-call
+            - distribution
+            - other
+          description: Type of transaction
+        description:
+          type: string
+          maxLength: 200
+          description: Optional free-text description
+        externalTransactionId:
+          type: string
+          maxLength: 100
+          description: Unique transaction ID from the external system
 
     ErrorResponse:
       type: object
@@ -1081,3 +1141,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'               
+
+  /v1.1/cash-transactions:
+    post:
+      summary: Submit client cash transactions for AML monitoring
+      tags:
+        - Cash transactions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CashTransaction'
+            example:
+              - crmCode: BR123
+                transactionDate: 2024-12-01
+                portfolioId: PF-001
+                currency: EUR
+                amount: 15000.00
+                transactionType: coupon
+                description: Semi-annual bond coupon
+                externalTransactionId: EXT-TX-78901
+      responses:
+        '201':
+          description: Transactions accepted for analysis
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  receivedCount:
+                    type: integer
+                    example: 1
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid input"
+                code: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '404':
+          description: Unknown business relation 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'  
