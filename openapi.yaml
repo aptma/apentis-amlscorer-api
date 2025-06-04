@@ -407,6 +407,25 @@ components:
           type: string
           maxLength: 100
           description: Unique transaction ID from the external system
+        originCountry:
+          type: string
+          maxLength: 2
+          pattern: "^[A-Z]{2}$"
+          description: ISO 2-letter country code of the transaction's origin (e.g., FR)
+        originIban:
+          type: string
+          maxLength: 34
+          description: IBAN of the originating bank account
+        destinationCountry:
+          type: string
+          maxLength: 2
+          pattern: "^[A-Z]{2}$"
+          description: ISO 2-letter country code of the transaction's destination (e.g., DE)
+        destinationIban:
+          type: string
+          maxLength: 34
+          description: IBAN of the beneficiary bank account
+
 
     ErrorResponse:
       type: object
@@ -1163,9 +1182,13 @@ paths:
                 portfolioId: PF-001
                 currency: EUR
                 amount: 15000.00
-                transactionType: coupon
-                description: Semi-annual bond coupon
+                transactionType: subscription
+                description: 15,000€ to subscribe in Ishares World R EUR
                 externalTransactionId: EXT-TX-78901
+                originCountry: LU
+                originIban: LU7630006000011234567890189
+                destinationCountry: DE
+                destinationIban: DE89370400440532013000
       responses:
         '201':
           description: Transactions accepted for analysis
