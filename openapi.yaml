@@ -46,7 +46,9 @@ info:
 
 servers:
   - url: https://api.apentis.com/v1.1
-    description: Apentis API documentation - Production v1.1
+    description: API for Production environment
+  - url: https://test-api.apentis.com/v1.1
+    description: API for Test environment (for sandbox integration)    
 
 security:
   - bearerAuth: []

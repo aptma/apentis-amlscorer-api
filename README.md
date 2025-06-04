@@ -14,6 +14,17 @@ All endpoints are protected by a Bearer token. Clients must pass the token in th
 Authorization: Bearer <your_token_here>
 ```
 
+## 🌍 Environments
+
+This API is available in two environments:
+
+| Environment | Base URL                              | Description                        |
+|-------------|----------------------------------------|------------------------------------|
+| Production  | `https://api.apentis.com/v1.1`         | Live API connected to production   |
+| Test        | `https://test-api.apentis.com/v1.1`    | Sandbox API for safe testing       |
+
+You can use the test environment to integrate and validate your setup without affecting live data. Contact us to receive a test token.
+
 ## 🔗 Live documentation
 
 The interactive API documentation is available here:
