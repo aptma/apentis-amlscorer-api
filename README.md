@@ -127,11 +127,11 @@ Authorization: Bearer <your_token_here>
 
 ## 🧪 Testing
 
-Automated tests verify that the `openapi.yaml` specification is valid. To run
-them, install the test dependencies and execute `pytest`:
+Automated tests verify that the `openapi.yaml` specification is valid. Install
+the test dependencies from `requirements-dev.txt` and run `pytest`:
 
 ```bash
-pip install openapi-spec-validator pytest
+pip install -r requirements-dev.txt
 pytest
 ```
 
