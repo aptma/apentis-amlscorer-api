@@ -5,7 +5,7 @@ info:
   description: |
     This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis platform.
 
-    👉 For full documentation, usage examples and changelogs, please see:
+    For full documentation, usage examples and changelogs, please see:
     [README on GitHub](https://github.com/aptma/apentis-amlscorer-api?tab=readme-ov-file#readme)
 
     ## Authentication
