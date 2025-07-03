@@ -45,9 +45,9 @@ info:
     url: https://www.apentis.com/contact
 
 servers:
-  - url: https://api.apentis.com/v1.1
+  - url: https://api.apentis.com
     description: API for Production environment
-  - url: https://www.rq-test.com/api/v1.1
+  - url: https://www.rq-test.com/api
     description: API for Test environment (for sandbox integration)    
 
 security:
