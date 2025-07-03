@@ -214,8 +214,8 @@ components:
           description: Business relation type.
         relationStatus:
           type: string
-          enum: [Active, Terminated]
-          default: Active
+          enum: [active, terminated]
+          default: active
           description: Status of the business relation.
         crmCode:
           type: string
@@ -462,12 +462,12 @@ paths:
               nationality: PL
               fiscalCountry: PL
               countryOfResidence: PL
-              language: en
+              language: EN
               birthDate: 1985-09-12
               phoneNumber: '+48 123 456 789'
               email: anna.nowak@example.com
-              relationType: Client
-              relationStatus: Active
+              relationshipStatus: Client
+              relationStatus: active
               crmCode: CUST-PL-2024-0001
       responses:
         '201':
