@@ -350,6 +350,39 @@ components:
             - Shareholder
           description: The role of the linked business relation in relation to the main one. Please see the README file to see authorized links between entities.
 
+    BusinessRelationLinkDeleteRequest:
+        type: array
+        items:
+          type: object
+          required:
+            - linkedCrmCode
+            - role
+          properties:
+            linkedCrmCode:
+              type: string
+              maxLength: 100
+              description: The CRM code of the related business relation to unlink.
+            role:
+              type: string
+              enum:
+                - Director
+                - Board member
+                - Trustee
+                - Protector
+                - Settlor
+                - Beneficiary of the trust
+                - Key person
+                - Corporate director
+                - President
+                - Treasurer
+                - Secretary
+                - General partner
+                - Limited partner
+                - Beneficial owner
+                - Member
+                - Shareholder
+              description: Role to remove from the relationship.
+
     CashTransaction:
       type: object
       required:
@@ -609,12 +642,12 @@ paths:
                 nationality: PL
                 fiscalCountry: PL
                 countryOfResidence: PL
-                language: pl
+                language: EN
                 birthDate: 1985-09-12
                 phoneNumber: "+48 123 456 789"
                 email: anna.nowak@example.com
-                relationType: Client
-                relationStatus: Active
+                relationshipStatus: Client
+                relationStatus: active
                 crmCode: CUST-PL-2024-0001
         '401':
           description: Unauthorized - Missing or invalid token
@@ -1008,6 +1041,75 @@ paths:
                     - primaryCrmCode: FB001
                       linkedCrmCode: SH002
                       role: Shareholder
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1.1/business-relations/{crmCode}/links:
+    delete:
+      summary: Delete business relation links
+      tags:
+        - Business Relation Links
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: crmCode
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The CRM code of the primary business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessRelationLinkDeleteRequest'
+            example:
+              - linkedCrmCode: MZ001
+                role: Director
+              - linkedCrmCode: SH002
+                role: Shareholder
+      responses:
+        '200':
+          description: Links deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  deletedLinks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        linkedCrmCode:
+                          type: string
+                          example: MZ001
+                        role:
+                          type: string
+                          example: Director
         '400':
           description: Invalid input
           content:

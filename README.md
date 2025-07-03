@@ -52,6 +52,8 @@ The interactive API documentation is available here:
 
 ### Relations between business relations
 - `POST /business-relations/{crmCode}/links`: Link one business relation to others (e.g. Person → Company) with a specific role (e.g. Director, Shareholder)
+- `DELETE /business-relations/{crmCode}/links`: Remove one or more links between the primary business relation and other entities
+
 
 ### Investor commitments
 - `POST /business-relations/{crmCode}/investor-commitments`: Register or update a fund commitment by an investor
