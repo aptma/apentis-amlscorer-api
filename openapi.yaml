@@ -187,10 +187,19 @@ components:
           type: string
           maxLength: 2
           description: ISO 2-letter country of operation. Applicable for companies.
+        address:
+          type: string
+          description: Street address of the business relation.
+        postalCode:
+          type: string
+          description: Postal code of the business relation.
+        city:
+          type: string
+          description: City of the business relation.
         countryOfResidence:
           type: string
           maxLength: 2
-          description: ISO 2-letter country of residence. Applicable for persons.
+          description: ISO 2-letter country of residence. 
         language:
           type: string
           maxLength: 2
@@ -494,6 +503,9 @@ paths:
               lastName: Nowak
               nationality: PL
               fiscalCountry: PL
+              address: 12A Nowy Swiat
+              postalCode: 80-145
+              city: Warsaw
               countryOfResidence: PL
               language: EN
               birthDate: 1985-09-12
@@ -641,6 +653,9 @@ paths:
                 lastName: Nowak
                 nationality: PL
                 fiscalCountry: PL
+                address: 12A Nowy Swiat
+                postalCode: 80-145
+                city: Warsaw
                 countryOfResidence: PL
                 language: EN
                 birthDate: 1985-09-12
