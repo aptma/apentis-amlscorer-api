@@ -326,18 +326,13 @@ components:
     BusinessRelationLink:
       type: object
       required:
-        - primaryCrmCode
         - linkedCrmCode
         - role
       properties:
-        primaryCrmCode:
-          type: string
-          maxLength: 100
-          description: The crmCode of the main business relation (e.g., a company).
         linkedCrmCode:
           type: string
           maxLength: 100
-          description: The crmCode of the related business relation (e.g., a person).
+          description: The crmCode of the business relation to link (e.g., a person).
         role:
           type: string
           enum:
@@ -1026,11 +1021,9 @@ paths:
               items:
                 $ref: '#/components/schemas/BusinessRelationLink'
             example:
-              - primaryCrmCode: FB001
-                linkedCrmCode: MZ001
+              - linkedCrmCode: MZ001
                 role: Director
-              - primaryCrmCode: FB001
-                linkedCrmCode: SH002
+              - linkedCrmCode: SH002
                 role: Shareholder
       responses:
         '201':
@@ -1050,11 +1043,9 @@ paths:
                 example:
                   status: success
                   linksCreated:
-                    - primaryCrmCode: FB001
-                      linkedCrmCode: MZ001
+                    - linkedCrmCode: MZ001
                       role: Director
-                    - primaryCrmCode: FB001
-                      linkedCrmCode: SH002
+                    - linkedCrmCode: SH002
                       role: Shareholder
         '400':
           description: Invalid input
