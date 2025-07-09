@@ -78,29 +78,29 @@ components:
     DocumentTypeEnum:
       type: string
       enum:
-        - Account valuation
-        - Acknowledgement of receipt - To invest with us
+        - account_valuation
+        - Acknowledgement of receipt
         - Advisory mandate contract
-        - AML letter
-        - Articles of Incorporation
+        - aml_letter
+        - articles_of_incorporation
         - Bank account details
         - Bank statement
-        - Business continuity plan (BCP / DRP)
+        - business_continuity_plan
         - Certificate of accommodation
-        - Certificate of good standing
-        - Certificate of incorporation
+        - Certificate of good standing 
+        - certificate of incorporation
         - Certificate of incumbency
         - Certificate of insurance
         - Civil partnership certificate
         - Client acceptance doc
-        - Client profile
+        - client_profile
         - Collateral agreement
         - Consumer loan agreement
-        - Copy of transaction notices (stocks, bonds,...)
+        - Copy of transaction notices
         - Corporate structure
-        - Death certificate
-        - Declaration of BO
-        - Deed
+        - death_certificate
+        - declaration_of_BO
+        - deed
         - Discretionary mandate contract
         - Divorce judgment
         - Driving licence
@@ -108,49 +108,49 @@ components:
         - Employment certificate
         - Employment contract
         - End of relationship doc
-        - File for entering into a business relationship (DER)
+        - entering business relationship
         - Family record book
         - FATCA classification
         - Financial statement
         - Financing plan
-        - General conditions
+        - general_conditions
         - Health insurance card
-        - ID card
-        - Investment profile
-        - KYC form
-        - KYC report
+        - ID card scan
+        - investment_profile
+        - KYC Form
+        - kyc_report
         - Life insurance contract
-        - List of authorized signatures
+        - list_authorized_signatures
         - Management agreement
         - Marriage certificate
         - MIFID classification
         - MIFID form
         - Mortgage loan agreement
-        - Name check
+        - name_check
         - Others
         - Passport
         - Pay slip
         - Phone subscription
-        - Power of attorney
+        - power_of_attorney
         - Proof of domicile
-        - Source of wealth documentation
-        - Deliberation of the last Board of Directors
-        - Minutes of the last General Assembly
-        - Trade register extract
+        - Proof of origin of capital
+        - PV board of directors
+        - PV general assembly
+        - RCS
         - Register of beneficial owners
         - Register of directors
         - Register of shareholders
         - Resident card
         - RTO mandate contract
         - Separation agreement
-        - Articles of association of a company
+        - Status
         - Tax notice
         - Tax registration number
-        - Termination letter
-        - Transaction record (stocks, bonds,...)
+        - termination_letter
+        - Transaction record
         - Tripartite agreement
-        - Utility Bill
-        - Rapport de visite
+        - utility_bill
+        - visit_report
 
     BusinessRelation:
       type: object
@@ -955,7 +955,7 @@ paths:
               $ref: '#/components/schemas/DocumentMetadata'
             example:
               documentName: "ID Card - Jean Dupont"
-              documentType: "ID card"
+              documentType: "ID card scan"
               issuanceDate: "2019-05-01"
               expirationDate: "2029-05-01"
               documentNumber: "ID123456789"
@@ -1167,9 +1167,9 @@ paths:
                 lastKycReviewDate: 2024-11-15
                 missingDocuments:
                   - Proof of domicile
-                  - Source of wealth documentation
+                  - Financial statement
                 expiredDocuments:
-                  - ID card
+                  - ID card scan
         '401':
           description: Unauthorized - Missing or invalid token
           content:
