@@ -542,6 +542,15 @@ paths:
               example:
                 error: "Unauthorized - Missing or invalid token"
                 code: 401
+        '409':
+          description: Conflict - Already existing crmCode
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Conflict - Already existing crmCode"
+                code: 409
         '500':
           description: Internal Server Error
           content:
