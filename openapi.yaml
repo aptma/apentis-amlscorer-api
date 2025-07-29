@@ -151,6 +151,7 @@ components:
         - termination_letter
         - Transaction record
         - Tripartite agreement
+        - Unique Identification Number
         - utility_bill
         - visit_report
 
