@@ -491,6 +491,55 @@ components:
           type: boolean
           description: Optional pre-flag from source system if already suspected          
 
+    CashFlowResult:
+      type: object
+      properties:
+        externalTransactionId:
+          type: string
+        crmCode:
+          type: string
+        portfolioId:
+          type: string
+        transactionDate:
+          type: string
+          format: date
+        analysisResult:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [clear, flagged, pending-review]
+            riskScore:
+              type: integer
+              minimum: 0
+              maximum: 100
+            riskLevel:
+              type: string
+              enum: [low, medium, high]
+            automatedComment:
+              type: string
+            screeningHits:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  details:
+                    type: string
+        complianceReview:
+          type: object
+          properties:
+            reviewedBy:
+              type: string
+            reviewDate:
+              type: string
+              format: date
+            status:
+              type: string
+              enum: [approved, under_investigation, escalated, dismissed]
+            comment:
+              type: string
 
     ErrorResponse:
       type: object
@@ -1390,3 +1439,70 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'  
+
+  /v1.1/cash-transactions/{externalTransactionId}/aml-result:
+    get:
+      summary: Get AML cahsflow monitoring result for a cash transaction
+      parameters:
+        - name: externalTransactionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: AML result retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CashFlowResult'
+              examples:
+                example:
+                  value:
+                    externalTransactionId: "TX123456789"
+                    crmCode: "BR001234"
+                    portfolioId: "P123456"
+                    transactionDate: "2025-07-31"
+                    analysisResult:
+                      status: "flagged"
+                      riskScore: 76
+                      riskLevel: "high"
+                      automatedComment: "Frequent transfers to high-risk country. Transaction inconsistent with client profile."
+                      screeningHits:
+                        - type: "Country Risk"
+                          details: "Destination country is on a sanctions list (IR)."
+                        - type: "Transaction Pattern"
+                          details: "3 similar transfers within the past 7 days."
+                    complianceReview:
+                      reviewedBy: "compliance_user1"
+                      reviewDate: "2025-08-01"
+                      status: "under_investigation"
+                      comment: "Requested source of funds justification from advisor."
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid input"
+                code: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Transaction not found"
+                code: 404
+
