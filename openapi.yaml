@@ -1443,6 +1443,8 @@ paths:
   /v1.1/cash-transactions/{externalTransactionId}/aml-result:
     get:
       summary: Get AML cahsflow monitoring result for a cash transaction
+      tags:
+        - Cash transactions      
       parameters:
         - name: externalTransactionId
           in: path
@@ -1506,3 +1508,89 @@ paths:
                 error: "Transaction not found"
                 code: 404
 
+  /v1.1/cash-transactions/aml-results:
+    get:
+      summary: List AML results for a business relation or portfolio
+      tags:
+        - Cash transactions         
+      parameters:
+        - name: crmCode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: portfolioId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of AML results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CashFlowResult'
+              examples:
+                example:
+                  value:
+                    - externalTransactionId: "TX123456789"
+                      crmCode: "BR001234"
+                      portfolioId: "P123456"
+                      transactionDate: "2025-07-31"
+                      analysisResult:
+                        status: "flagged"
+                        riskScore: 76
+                        riskLevel: "high"
+                        automatedComment: "Frequent transfers to high-risk country."
+                        screeningHits:
+                          - type: "Country Risk"
+                            details: "Destination: Afghanistan (high terror risk)."
+                      complianceReview:
+                        reviewedBy: "officerA"
+                        reviewDate: "2025-08-01"
+                        status: "under_investigation"
+                        comment: "Pending external justification."
+
+                    - externalTransactionId: "TX654321000"
+                      crmCode: "BR001234"
+                      portfolioId: "P123456"
+                      transactionDate: "2025-07-30"
+                      analysisResult:
+                        status: "clear"
+                        riskScore: 12
+                        riskLevel: "low"
+                        automatedComment: "Low-value deposit, origin country: LU."
+                        screeningHits: []
+                      complianceReview: null
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid input"
+                code: 400
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+                
