@@ -60,6 +60,8 @@ The interactive API documentation is available here:
 
 ### Cash transactions 
 - `POST /cash-transactions`: Submit one or more client cash transactions for cashflow monitoring and suspicious activity detection
+- `GET /cash-transactions/{externalTransactionId}/aml-result`: Retrieve the AML monitoring result for a specific transaction.
+- `GET /cash-transactions/aml-results`: List AML monitoring results for a specific business relation or portfolio.
 
 
 ---
