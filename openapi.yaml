@@ -409,6 +409,10 @@ components:
           type: string
           format: date
           description: Transaction date in YYYY-MM-DD format
+        valueDate:
+          type: string
+          format: date
+          description: Date of value or settlement in YYYY-MM-DD format (optional)          
         portfolioId:
           type: string
           maxLength: 100
@@ -439,6 +443,9 @@ components:
             - distribution
             - other
           description: Type of transaction
+        transactionDirection:
+          type: string
+          enum: [inflow, outflow]          
         description:
           type: string
           maxLength: 200
@@ -456,6 +463,10 @@ components:
           type: string
           maxLength: 34
           description: IBAN of the originating bank account
+        originatorName:
+          type: string
+          maxLength: 100
+          description: Name of the counterparty sending the funds          
         destinationCountry:
           type: string
           maxLength: 2
@@ -465,6 +476,20 @@ components:
           type: string
           maxLength: 34
           description: IBAN of the beneficiary bank account
+        beneficiaryName:
+          type: string
+          maxLength: 100
+          description: Name of the counterparty receiving the funds
+        complianceNote:
+          type: string
+          maxLength: 200
+          description: Optional field from the back office with context or risk flag
+        isInternalTransfer:
+          type: boolean
+          description: Indicates if the cash movement is internal (between client’s own portfolios)
+        isSuspicious:
+          type: boolean
+          description: Optional pre-flag from source system if already suspected          
 
 
     ErrorResponse:
@@ -1283,6 +1308,7 @@ paths:
   /v1.1/cash-transactions:
     post:
       summary: Submit client cash transactions for AML monitoring
+      description: Send a cash transaction for automated AML/KYC evaluation.
       tags:
         - Cash transactions
       security:
@@ -1349,6 +1375,15 @@ paths:
               example:
                 error: "Not Found - Business relation with specified crmCode not found"
                 code: 404
+        '409':
+          description: Duplicate transaction 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Duplicate - Transaction already exists"
+                code: 409                
         '500':
           description: Internal server error
           content:
