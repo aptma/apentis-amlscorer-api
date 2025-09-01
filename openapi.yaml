@@ -66,6 +66,8 @@ tags:
     description: Endpoints related to investor fund commitments.
   - name: Cash transactions
     description: Endpoints for submitting and monitoring cash movements related to AML processes.
+  - name: Portfolio data
+    description: Read-only endpoints to check data readiness and retrieve normalized custody **positions** and **transactions** (aggregated across custodians and portfolios).
 
 components:
   securitySchemes:
@@ -540,6 +542,58 @@ components:
               enum: [approved, under_investigation, escalated, dismissed]
             comment:
               type: string
+
+    CustodianAvailability:
+      type: object
+      required: [custodian_id]
+      properties:
+        custodian_id:
+          type: string
+          description: Custodian code (e.g., BIC)
+        # Positions readiness (present only if scope includes positions)
+        positions_status:
+          type: string
+          nullable: true
+          description: Aggregated status across all portfolios at this custodian
+          enum: [complete, partial, loading, failed]
+        positions_loaded_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Latest contributing portfolio timestamp (UTC)
+        positions_ingestion_runs:
+          type: array
+          items: { type: string }
+          description: Distinct ingestion run IDs that contributed to the status
+        # Transactions readiness (present only if scope includes transactions)
+        transactions_status:
+          type: string
+          nullable: true
+          enum: [complete, partial, loading, failed]
+        transactions_loaded_at:
+          type: string
+          format: date-time
+          nullable: true
+        transactions_ingestion_runs:
+          type: array
+          items: { type: string }
+        notes:
+          type: string
+          nullable: true
+          description: Short diagnostic text (present only if include_notes=true)
+
+    AvailabilitySingleDate:
+      type: object
+      required: [customer_id, as_of_date, custodians]
+      properties:
+        customer_id:
+          type: string
+        as_of_date:
+          type: string
+          format: date
+        custodians:
+          type: array
+          items: { $ref: "#/components/schemas/CustodianAvailability" }
 
     ErrorResponse:
       type: object
@@ -1593,4 +1647,108 @@ paths:
               example:
                 error: "Unauthorized - Missing or invalid token"
                 code: 401
+
+  /v1.1/data/availability:
+    get:
+      summary: Custodian availability for positions and/or transactions
+      tags:
+        - Portfolio data       
+      description: |
+        Returns readiness (per custodian) for a given customer and date.
+        Aggregates across all portfolios under each custodian.
+      operationId: getDataAvailability
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: customer_id
+          required: true
+          description: Customer identifier 
+          schema: { type: string, minLength: 1 }
+        - in: query
+          name: as_of_date
+          required: true
+          description: Snapshot date (YYYY-MM-DD)
+          schema: { type: string, format: date }
+        - in: query
+          name: custodian_id
+          required: false
+          description: Filter to a single custodian (internal code provided by Apentis)
+          schema: { type: string }
+        - in: query
+          name: scope
+          required: false
+          description: What readiness to return
+          schema:
+            type: string
+            enum: [positions, transactions, both]
+            default: both
+        - in: query
+          name: include_notes
+          required: false
+          description: Include short diagnostic notes
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvailabilitySingleDate"
+              examples:
+                positionsOnly:
+                  summary: scope=positions
+                  value:
+                    customer_id: DEMO
+                    as_of_date: "2025-09-01"
+                    custodians:
+                      - custodian_id: BDL_LU
+                        positions_status: complete
+                        positions_loaded_at: "2025-09-01T05:42:11Z"
+                        positions_ingestion_runs: ["ing-20250901-001"]
+                transactionsOnly:
+                  summary: scope=transactions
+                  value:
+                    customer_id: DEMO
+                    as_of_date: "2025-09-01"
+                    custodians:
+                      - custodian_id: BDL_LU
+                        transactions_status: loading
+                        transactions_loaded_at: "2025-09-01T05:44:33Z"
+                        transactions_ingestion_runs: ["ing-20250901-005"]
+                bothDefault:
+                  summary: scope=both (default)
+                  value:
+                    customer_id: DEMO
+                    as_of_date: "2025-09-01"
+                    custodians:
+                      - custodian_id: BDL_LU
+                        positions_status: complete
+                        positions_loaded_at: "2025-09-01T05:42:11Z"
+                        positions_ingestion_runs: ["ing-20250901-001"]
+                        transactions_status: complete
+                        transactions_loaded_at: "2025-09-01T05:44:33Z"
+                        transactions_ingestion_runs: ["ing-20250901-005"]
+        "400":
+          description: Bad Request (missing/invalid parameters)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "403":
+          description: Forbidden (token not allowed for this customer_id)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "422":
+          description: Unprocessable entity (invalid custodian_id or scope)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "429":
+          description: Too many requests
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
                 
