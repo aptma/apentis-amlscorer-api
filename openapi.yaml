@@ -549,7 +549,7 @@ components:
       properties:
         custodian_id:
           type: string
-          description: Custodian code (e.g., BIC)
+          description: Custodian code (custodian ID code provided by Apentis)
         # Positions readiness (present only if scope includes positions)
         positions_status:
           type: string
@@ -594,6 +594,64 @@ components:
         custodians:
           type: array
           items: { $ref: "#/components/schemas/CustodianAvailability" }
+
+    SecurityOtherCode:
+      type: object
+      required: [scheme, value]
+      properties:
+        scheme: { type: string, description: "Identifier scheme (e.g., ISIN, Bloomberg, CUSIP)" }
+        value:  { type: string, description: "Code value in the given scheme" }
+
+    PositionRecord:
+      type: object
+      required:
+        [ date, portfolio_custodian_id, portfolio_id, portfolio_currency_id,
+          is_cash, quantity, market_value_security_ccy, market_value_portfolio_ccy,
+          custodian_id, importation_time ]
+      properties:
+        date: { type: string, format: date, description: "Position date (YYYY-MM-DD)" }
+        portfolio_custodian_id: { type: string, description: "Portfolio/account code at custodian" }
+        portfolio_id: { type: string, description: "Apentis portfolio id" }
+        portfolio_currency_id: { type: string, description: "ISO 4217 code, e.g. EUR" }
+        is_cash: { type: boolean, description: "True if the row represents cash" }
+        security_other_code:
+          type: array
+          nullable: true
+          description: "Alternative security identifiers"
+          items: { $ref: "#/components/schemas/SecurityOtherCode" }
+        security_bank_id: { type: string, nullable: true }
+        security_id: { type: string, nullable: true, description: "Apentis security id; may be null for cash" }
+        security_name: { type: string, nullable: true }
+        security_currency_id: { type: string, nullable: true }
+        security_multiplier: { type: number, format: double, nullable: true }
+        security_sector_id: { type: string, nullable: true }
+        security_country_id: { type: string, nullable: true, description: "ISO 3166 country code" }
+        security_asset_class_id: { type: string, nullable: true }
+        security_industry_id: { type: string, nullable: true }
+        quantity: { type: string, description: "Decimal as string" }
+        price_date: { type: string, format: date, nullable: true }
+        price: { type: string, nullable: true, description: "Decimal as string; price in security currency" }
+        market_value_security_ccy: { type: string, description: "Decimal as string; MV in security currency" }
+        market_value_portfolio_ccy: { type: string, description: "Decimal as string; MV in portfolio currency" }
+        cost_price: { type: string, nullable: true }
+        accrued_interest: { type: string, nullable: true }
+        custodian_id: { type: string, description: "Custodian code (custodian ID code provided by Apentis)" }
+        importation_time: { type: string, format: date-time, description: "UTC timestamp when imported into Apentis" }
+
+    PositionsResponse:
+      type: object
+      required: [customer_id, portfolio_id, as_of_date, positions]
+      properties:
+        customer_id: { type: string }
+        portfolio_id: { type: string }
+        as_of_date: { type: string, format: date }
+        ingestion_run_id:
+          type: string
+          nullable: true
+          description: "Ingestion run id that produced this snapshot"
+        positions:
+          type: array
+          items: { $ref: "#/components/schemas/PositionRecord" }
 
     ErrorResponse:
       type: object
@@ -1751,4 +1809,156 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  /v1.1/portfolios/{portfolio_id}/positions:
+    get:
+      tags: [Portfolio data]
+      summary: Positions snapshot by portfolio and date
+      description: |
+        Returns custody positions (cash + securities) for a portfolio as of a given date.
+        Records are normalized across custodians. Data is served only when ready.
+        If the requested custodian (or any custodian when none is specified) is not ready,
+        the server returns 409 Conflict with details.
+      operationId: getPortfolioPositions
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: portfolio_id
+          required: true
+          description: Apentis canonical portfolio identifier
+          schema: { type: string, minLength: 1 }
+        - in: query
+          name: customer_id
+          required: true
+          description: Tenant/customer identifier
+          schema: { type: string, minLength: 1 }
+        - in: query
+          name: as_of_date
+          required: true
+          description: Snapshot date (YYYY-MM-DD)
+          schema: { type: string, format: date }
+        - in: query
+          name: custodian_id
+          required: false
+          description: Filter to a single custodian. If omitted, all custodians must be ready.
+          schema: { type: string }
+        - in: query
+          name: type
+          required: false
+          description: Filter by position type
+          schema:
+            type: string
+            enum: [all, security, cash]
+            default: all
+        - in: query
+          name: page_size
+          required: false
+          description: Number of records per page (max 5000)
+          schema: { type: integer, minimum: 1, maximum: 5000, default: 1000 }
+        - in: query
+          name: cursor
+          required: false
+          description: Opaque pagination cursor returned by the previous page
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PositionsResponse"
+              examples:
+                firstPage:
+                  summary: First page with next_cursor
+                  value:
+                    customer_id: DEMO
+                    portfolio_id: PF-001
+                    as_of_date: "2025-09-01"
+                    ingestion_run_id: ing-20250901-001
+                    positions:
+                      - date: "2025-09-01"
+                        portfolio_custodian_id: ACCT-12345
+                        portfolio_id: PF-001
+                        portfolio_currency_id: EUR
+                        is_cash: false
+                        security_other_code:
+                          - { scheme: ISIN, value: CH0024608827 }
+                          - { scheme: Bloomberg, value: "PGHN SE Equity" }
+                        security_bank_id: BANK_SEC_789
+                        security_id: APNT_SEC_456
+                        security_name: "Partners Group Holding AG"
+                        security_currency_id: CHF
+                        security_multiplier: 1.0
+                        security_sector_id: INDUSTRIALS
+                        security_country_id: CH
+                        security_asset_class_id: Equity
+                        security_industry_id: "Capital Markets"
+                        quantity: "1200.0000"
+                        price_date: "2025-09-01"
+                        price: "1040.5000"
+                        market_value_security_ccy: "1248600.00"
+                        market_value_portfolio_ccy: "1293000.25"
+                        cost_price: "980.0000"
+                        accrued_interest: null
+                        custodian_id: BLUXLULL
+                        importation_time: "2025-09-01T05:42:11Z"
+                    next_cursor: "eyJvZmZzZXQiOiJCTFVYTFVMTCIsInBvcyI6IjAwMDAwMDAxIn0="
+                lastPage:
+                  summary: Last page (no next_cursor)
+                  value:
+                    customer_id: DEMO
+                    portfolio_id: PF-001
+                    as_of_date: "2025-09-01"
+                    ingestion_run_id: ing-20250901-001
+                    positions: []
+                    next_cursor: null
+        "404":
+          description: Portfolio not found for this customer_id
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "409":
+          description: Conflict — data not ready for the requested scope
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              examples:
+                notReadySingleCustodian:
+                  summary: Requested custodian not ready
+                  value:
+                    error: data_not_ready
+                    message: "Positions not ready for custodian BIL_LU on 2025-09-01."
+                    details:
+                      customer_id: DEMO
+                      portfolio_id: PF-001
+                      as_of_date: "2025-09-01"
+                      custodians:
+                        - custodian_id: BIL_LU
+                          positions_status: loading
+                          positions_loaded_at: "2025-09-01T05:12:00Z"
+                notReadyAnyCustodian:
+                  summary: At least one custodian not ready when no filter is provided
+                  value:
+                    error: data_not_ready
+                    message: "Positions not ready for all custodians on 2025-09-01."
+                    details:
+                      customer_id: DEMO
+                      portfolio_id: PF-001
+                      as_of_date: "2025-09-01"
+                      not_ready:
+                        - { custodian_id: CITIUS33, positions_status: partial, positions_loaded_at: "2025-09-01T05:11:03Z" }
+        "422":
+          description: Unprocessable Entity (invalid query parameters)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
                 
