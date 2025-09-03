@@ -594,10 +594,8 @@ components:
 
     AvailabilitySingleDate:
       type: object
-      required: [customer_id, as_of_date, custodians]
+      required: [as_of_date, custodians]
       properties:
-        customer_id:
-          type: string
         as_of_date:
           type: string
           format: date
@@ -734,9 +732,8 @@ components:
 
     PositionsResponse:
       type: object
-      required: [customer_id, portfolio_id, as_of_date, positions]
+      required: [portfolio_id, as_of_date, positions]
       properties:
-        customer_id: { type: string }
         portfolio_id: { type: string }
         as_of_date: { type: string, format: date }
         ingestion_run_id:
@@ -757,7 +754,7 @@ components:
           type: integer
           description: Application-specific or HTTP error code
       example:
-        error: "Internal Server Error"
+        error: "Internal Server error"
         code: 500
 
 paths:
@@ -1554,7 +1551,7 @@ paths:
                 error: "Not Found - Business relation with specified crmCode not found"
                 code: 404
         '500':
-          description: Internal server error
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1640,7 +1637,7 @@ paths:
                 error: "Duplicate - Transaction already exists"
                 code: 409                
         '500':
-          description: Internal server error
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1806,17 +1803,12 @@ paths:
       tags:
         - Portfolio data       
       description: |
-        Returns readiness (per custodian) for a given customer and date.
+        Returns readiness (per custodian) for a given date.
         Aggregates across all portfolios under each custodian.
       operationId: getDataAvailability
       security:
         - bearerAuth: []
       parameters:
-        - in: query
-          name: customer_id
-          required: true
-          description: Customer identifier 
-          schema: { type: string, minLength: 1 }
         - in: query
           name: as_of_date
           required: true
@@ -1851,7 +1843,6 @@ paths:
                 positionsOnly:
                   summary: scope=positions
                   value:
-                    customer_id: DEMO
                     as_of_date: "2025-09-01"
                     custodians:
                       - custodian_id: BDL_LU
@@ -1861,7 +1852,6 @@ paths:
                 transactionsOnly:
                   summary: scope=transactions
                   value:
-                    customer_id: DEMO
                     as_of_date: "2025-09-01"
                     custodians:
                       - custodian_id: BDL_LU
@@ -1871,7 +1861,6 @@ paths:
                 bothDefault:
                   summary: scope=both (default)
                   value:
-                    customer_id: DEMO
                     as_of_date: "2025-09-01"
                     custodians:
                       - custodian_id: BDL_LU
@@ -1886,11 +1875,15 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
-        "403":
-          description: Forbidden (token not allowed for this customer_id)
+        '401':
+          description: Unauthorized
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
         "422":
           description: Unprocessable entity (invalid custodian_id or scope)
           content:
@@ -1899,7 +1892,7 @@ paths:
         "429":
           description: Too many requests
         "500":
-          description: Server Error
+          description: Internal Server Error
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
@@ -1921,11 +1914,6 @@ paths:
           name: portfolio_id
           required: true
           description: Apentis canonical portfolio identifier
-          schema: { type: string, minLength: 1 }
-        - in: query
-          name: customer_id
-          required: true
-          description: Tenant/customer identifier
           schema: { type: string, minLength: 1 }
         - in: query
           name: as_of_date
@@ -1966,7 +1954,6 @@ paths:
                 firstPage:
                   summary: First page with next_cursor
                   value:
-                    customer_id: DEMO
                     portfolio_id: PF-001
                     as_of_date: "2025-09-01"
                     ingestion_run_id: ing-20250901-001
@@ -2001,14 +1988,13 @@ paths:
                 lastPage:
                   summary: Last page (no next_cursor)
                   value:
-                    customer_id: DEMO
                     portfolio_id: PF-001
                     as_of_date: "2025-09-01"
                     ingestion_run_id: ing-20250901-001
                     positions: []
                     next_cursor: null
         "404":
-          description: Portfolio not found for this customer_id
+          description: Portfolio not found 
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
@@ -2024,7 +2010,6 @@ paths:
                     error: data_not_ready
                     message: "Positions not ready for custodian BIL_LU on 2025-09-01."
                     details:
-                      customer_id: DEMO
                       portfolio_id: PF-001
                       as_of_date: "2025-09-01"
                       custodians:
@@ -2037,7 +2022,6 @@ paths:
                     error: data_not_ready
                     message: "Positions not ready for all custodians on 2025-09-01."
                     details:
-                      customer_id: DEMO
                       portfolio_id: PF-001
                       as_of_date: "2025-09-01"
                       not_ready:
@@ -2048,9 +2032,9 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
         "429":
-          description: Too Many Requests
+          description: Too many requests
         "500":
-          description: Server Error
+          description: Internal Server error
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
