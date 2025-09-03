@@ -79,83 +79,93 @@ components:
   schemas:
     DocumentTypeEnum:
       type: string
+      description: Document types. See the "Document types" reference list in GitBook.
       enum:
-        - account_valuation
-        - Acknowledgement of receipt
-        - Advisory mandate contract
-        - aml_letter
-        - articles_of_incorporation
-        - Bank account details
-        - Bank statement
-        - business_continuity_plan
-        - Certificate of accommodation
-        - Certificate of good standing 
-        - certificate of incorporation
-        - Certificate of incumbency
-        - Certificate of insurance
-        - Civil partnership certificate
-        - Client acceptance doc
-        - client_profile
-        - Collateral agreement
-        - Consumer loan agreement
-        - Copy of transaction notices
-        - Corporate structure
-        - Criminal record
-        - death_certificate
-        - declaration_of_BO
-        - deed
-        - Discretionary mandate contract
-        - Divorce judgment
-        - Driving licence
-        - Eligibility assessment
-        - Employment certificate
-        - Employment contract
-        - End of relationship doc
-        - Engagement letter
-        - entering business relationship
-        - Family record book
-        - FATCA classification
-        - Financial statement
-        - Financing plan
-        - general_conditions
-        - Health insurance card
-        - ID card scan
-        - investment_profile
-        - KYC Form
-        - kyc_report
-        - Life insurance contract
-        - list_authorized_signatures
-        - Management agreement
-        - Marriage certificate
-        - MIFID classification
-        - MIFID form
-        - Mortgage loan agreement
-        - name_check
-        - Others
-        - Passport
-        - Pay slip
-        - Phone subscription
-        - power_of_attorney
-        - Proof of domicile
-        - Proof of origin of capital
-        - PV board of directors
-        - PV general assembly
-        - RCS
-        - Register of beneficial owners
-        - Register of directors
-        - Register of shareholders
-        - Resident card
-        - RTO mandate contract
-        - Separation agreement
-        - Status
-        - Tax notice
-        - Tax registration number
-        - termination_letter
-        - Transaction record
-        - Tripartite agreement
-        - Unique Identification Number
-        - utility_bill
-        - visit_report
+        - "account_valuation"
+        - "Acknowledgement of receipt"
+        - "Advisory mandate contract"
+        - "aml_letter"
+        - "articles_of_incorporation"
+        - "Bank account details"
+        - "Bank statement"
+        - "business_continuity_plan"
+        - "Certificate of accommodation"
+        - "Certificate of good standing "
+        - "certificate of incorporation"
+        - "Certificate of incumbency"
+        - "Certificate of insurance"
+        - "Civil partnership certificate"
+        - "Client acceptance doc"
+        - "client_profile"
+        - "Collateral agreement"
+        - "Consumer loan agreement"
+        - "Copy of transaction notices"
+        - "Corporate structure"
+        - "Criminal record"
+        - "CRS sefl-certification"
+        - "death_certificate"
+        - "declaration_of_BO"
+        - "deed"
+        - "Discretionary mandate contract"
+        - "Divorce judgment"
+        - "Driving licence"
+        - "Eligibility assessment"
+        - "Employment certificate"
+        - "Employment contract"
+        - "End of relationship doc"
+        - "Engagement letter"
+        - "entering business relationship"
+        - "Family record book"
+        - "FATCA classification"
+        - "Financial statement"
+        - "Financing plan"
+        - "general_conditions"
+        - "Health insurance card"
+        - "ID card scan"
+        - "investment_profile"
+        - "KYC Form"
+        - "kyc_report"
+        - "Life insurance contract"
+        - "list_authorized_signatures"
+        - "Management agreement"
+        - "Marriage certificate"
+        - "Memorandum of association"
+        - "MIFID classification"
+        - "MIFID form"
+        - "Mortgage loan agreement"
+        - "name_check"
+        - "Others"
+        - "Passport"
+        - "Pay slip"
+        - "Phone subscription"
+        - "power_of_attorney"
+        - "Proof of domicile"
+        - "Proof of origin of capital"
+        - "PV board of directors"
+        - "PV BoD"
+        - "PV general assembly"
+        - "RCS"
+        - "Register of beneficial owners"
+        - "Register of directors"
+        - "Register of shareholders"
+        - "Resident card"
+        - "RTO mandate contract"
+        - "Separation agreement"
+        - "Status"
+        - "Structure chart"
+        - "Tax notice"
+        - "Tax registration number"
+        - "termination_letter"
+        - "Trade / Economic license"
+        - "Transaction record"
+        - "Tripartite agreement"
+        - "Unique Identification Number"
+        - "utility_bill"
+        - "VAT registration certificate"
+        - "VISA page"
+        - "visit_report"
+        - "W-8BEN"
+        - "W-9"
 
     BusinessRelation:
       type: object
@@ -602,7 +612,7 @@ components:
         scheme: { type: string, description: "Identifier scheme (e.g., ISIN, Bloomberg, CUSIP)" }
         value:  { type: string, description: "Code value in the given scheme" }
 
-    SecurityIndustryId:
+    SecurityIndustryEnum:
       type: string
       description: Security industry code (see GitBook reference)
       enum:
@@ -632,7 +642,7 @@ components:
         - TS
         - UT
 
-    SecuritySectorId:
+    SecuritySectorEnum:
       type: string
       description: Security sector code (see GitBook reference)
       enum:
@@ -650,7 +660,7 @@ components:
         - TE
         - UT
 
-    SecurityAssetClassId:
+    SecurityAssetClassEnum:
       type: string
       description: Asset class code (see GitBook reference)
       enum:
@@ -704,14 +714,14 @@ components:
         security_multiplier: { type: number, format: double, nullable: true }
         security_sector_id:
           nullable: true 
-          $ref: "#/components/schemas/SecuritySectorId"
+          $ref: "#/components/schemas/SecuritySectorEnum"
         security_country_id: { type: string, nullable: true, description: "ISO 3166 country code" }
         security_asset_class_id: 
           nullable: true
-          $ref: "#/components/schemas/SecurityAssetClassId"
+          $ref: "#/components/schemas/SecurityAssetClassEnum"
         security_industry_id:  
           nullable: true 
-          $ref: "#/components/schemas/SecurityIndustryId"
+          $ref: "#/components/schemas/SecurityIndustryEnum"
         quantity: { type: string, description: "Decimal as string" }
         price_date: { type: string, format: date, nullable: true }
         price: { type: string, nullable: true, description: "Decimal as string; price in security currency" }
