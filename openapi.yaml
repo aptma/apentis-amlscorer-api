@@ -863,6 +863,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/business-relations/{crmCode}:
     put:
@@ -935,6 +938,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
     get:
       summary: Retrieve a business relation by crmCode
@@ -998,6 +1004,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500                
 
   /v1.1/business-relations/{crmCode}/documents:
     post:
@@ -1114,6 +1123,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
     get:
       summary: Retrieve documents associated with a business relation
@@ -1176,6 +1188,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
     delete:
       summary: Delete documents associated with a business relation
@@ -1246,7 +1261,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/business-relations/{crmCode}/documents/metadata-only:
     post:
@@ -1312,6 +1329,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/business-relations/{crmCode}/links:
     post:
@@ -1383,6 +1403,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
     delete:
       summary: Delete business relation links
@@ -1451,6 +1474,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/business-relations/{crmCode}/aml-kyc-result:
     get:
@@ -1509,6 +1535,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/business-relations/{crmCode}/investor-commitments:
     post:
@@ -1582,6 +1611,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'               
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/cash-transactions:
     post:
@@ -1668,6 +1700,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'  
+              example:
+                error: "Internal Server Error"
+                code: 500
 
   /v1.1/cash-transactions/{externalTransactionId}/aml-result:
     get:
