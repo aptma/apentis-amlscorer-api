@@ -1897,10 +1897,13 @@ paths:
                         transactions_loaded_at: "2025-09-01T05:44:33Z"
                         transactions_ingestion_runs: ["15901"]
         "400":
-          description: Bad Request (missing/invalid parameters)
+          description: Bad Request
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Bad Request (missing/invalid parameters)"
+                code: 400
         '401':
           description: Unauthorized
           content:
@@ -1911,17 +1914,29 @@ paths:
                 error: "Unauthorized - Missing or invalid token"
                 code: 401
         "422":
-          description: Unprocessable entity (invalid custodian_id or scope)
+          description: Unprocessable entity
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Unprocessable entity (invalid custodian_id or scope)"
+                code: 422              
         "429":
           description: Too many requests
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Too many requests"
+                code: 429           
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Internal Server Error"
+                code: 500 
 
   /v1.1/data/positions:
     get:
@@ -2003,16 +2018,29 @@ paths:
                       custodian_id: "BIL LU"
                       positions_status: "partial"
         "422":
-          description: Unprocessable Entity (invalid parameters)
+          description: Unprocessable entity
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
-        "429": { description: Too Many Requests }
+              example:
+                error: "Unprocessable entity (invalid parameters)"
+                code: 422              
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Too many requests"
+                code: 429           
         "500":
-          description: Server Error
+          description: Internal Server Error
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Internal Server Error"
+                code: 500 
 
 
   /v1.1/data/portfolios/{portfolio_id}/positions:
@@ -2116,6 +2144,9 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Portfolio BILL_GATES_PTF not found"
+                code: 422                 
         "409":
           description: Conflict — data not ready for the requested scope
           content:
@@ -2143,18 +2174,30 @@ paths:
                       portfolio_id: PF-001
                       as_of_date: "2025-09-01"
                       not_ready:
-                        - { custodian_id: CITIUS33, positions_status: partial, positions_loaded_at: "2025-09-01T05:11:03Z" }
+                        - { custodian_id: BDL_LU, positions_status: partial, positions_loaded_at: "2025-09-01T05:11:03Z" }
         "422":
-          description: Unprocessable Entity (invalid query parameters)
+          description: Unprocessable entity
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Unprocessable entity (invalid parameters)"
+                code: 422              
         "429":
           description: Too many requests
-        "500":
-          description: Internal Server error
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Too many requests"
+                code: 429           
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              example:
+                error: "Internal Server Error"
+                code: 500 
 
                 
