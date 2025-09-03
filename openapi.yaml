@@ -602,6 +602,84 @@ components:
         scheme: { type: string, description: "Identifier scheme (e.g., ISIN, Bloomberg, CUSIP)" }
         value:  { type: string, description: "Code value in the given scheme" }
 
+    SecurityIndustryId:
+      type: string
+      description: Security industry code (see GitBook reference)
+      enum:
+        - "-"
+        - AC
+        - BK
+        - CDA
+        - CG
+        - CPS
+        - DF
+        - EN
+        - FBT
+        - FSR
+        - HCES
+        - HPP
+        - HRL
+        - IN
+        - MA
+        - ME
+        - PB
+        - RE
+        - RT
+        - SS
+        - SSE
+        - THE
+        - TR
+        - TS
+        - UT
+
+    SecuritySectorId:
+      type: string
+      description: Security sector code (see GitBook reference)
+      enum:
+        - "-"
+        - CD
+        - CS
+        - EN
+        - FN
+        - HC
+        - ID
+        - IT
+        - MA
+        - Others
+        - RE
+        - TE
+        - UT
+
+    SecurityAssetClassId:
+      type: string
+      description: Asset class code (see GitBook reference)
+      enum:
+        - AR
+        - CA
+        - CC
+        - CF
+        - CO
+        - CV
+        - DE
+        - EQ
+        - FI
+        - FRN
+        - FX
+        - HF
+        - MAC
+        - MZ
+        - NFA
+        - OTHER
+        - PD
+        - PE
+        - PP
+        - RE
+        - RLI
+        - SE
+        - SP
+        - VOL
+        - YI
+
     PositionRecord:
       type: object
       required:
@@ -624,10 +702,16 @@ components:
         security_name: { type: string, nullable: true }
         security_currency_id: { type: string, nullable: true }
         security_multiplier: { type: number, format: double, nullable: true }
-        security_sector_id: { type: string, nullable: true }
+        security_sector_id:
+          nullable: true 
+          $ref: "#/components/schemas/SecuritySectorId"
         security_country_id: { type: string, nullable: true, description: "ISO 3166 country code" }
-        security_asset_class_id: { type: string, nullable: true }
-        security_industry_id: { type: string, nullable: true }
+        security_asset_class_id: 
+          nullable: true
+          $ref: "#/components/schemas/SecurityAssetClassId"
+        security_industry_id:  
+          nullable: true 
+          $ref: "#/components/schemas/SecurityIndustryId"
         quantity: { type: string, description: "Decimal as string" }
         price_date: { type: string, format: date, nullable: true }
         price: { type: string, nullable: true, description: "Decimal as string; price in security currency" }
