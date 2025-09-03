@@ -744,6 +744,35 @@ components:
           type: array
           items: { $ref: "#/components/schemas/PositionRecord" }
 
+    CustodianExclusion:
+      type: object
+      properties:
+        custodian_id: { type: string }
+        positions_status:
+          type: string
+          enum: [complete, partial, loading, failed]
+
+    PositionsCollectionResponse:
+      type: object
+      required: [as_of_date, positions]
+      properties:
+        as_of_date: { type: string, format: date }
+        included_custodians:
+          type: array
+          items: { type: string }
+          description: Custodians included in this response (ready at the time of request)
+        excluded_custodians:
+          type: array
+          items: { $ref: "#/components/schemas/CustodianExclusion" }
+          description: Custodians that were not ready and therefore excluded
+        positions:
+          type: array
+          items: { $ref: "#/components/schemas/PositionRecord" }
+        next_cursor:
+          type: string
+          nullable: true
+          description: Opaque cursor for fetching the next page; null if last page
+
     ErrorResponse:
       type: object
       properties:
@@ -753,9 +782,6 @@ components:
         code:
           type: integer
           description: Application-specific or HTTP error code
-      example:
-        error: "Internal Server error"
-        code: 500
 
 paths:
   /v1.1/business-relations:
@@ -1848,7 +1874,7 @@ paths:
                       - custodian_id: BDL_LU
                         positions_status: complete
                         positions_loaded_at: "2025-09-01T05:42:11Z"
-                        positions_ingestion_runs: ["ing-20250901-001"]
+                        positions_ingestion_runs: ["15788"]
                 transactionsOnly:
                   summary: scope=transactions
                   value:
@@ -1857,7 +1883,7 @@ paths:
                       - custodian_id: BDL_LU
                         transactions_status: loading
                         transactions_loaded_at: "2025-09-01T05:44:33Z"
-                        transactions_ingestion_runs: ["ing-20250901-005"]
+                        transactions_ingestion_runs: ["15789"]
                 bothDefault:
                   summary: scope=both (default)
                   value:
@@ -1866,10 +1892,10 @@ paths:
                       - custodian_id: BDL_LU
                         positions_status: complete
                         positions_loaded_at: "2025-09-01T05:42:11Z"
-                        positions_ingestion_runs: ["ing-20250901-001"]
+                        positions_ingestion_runs: ["15900"]
                         transactions_status: complete
                         transactions_loaded_at: "2025-09-01T05:44:33Z"
-                        transactions_ingestion_runs: ["ing-20250901-005"]
+                        transactions_ingestion_runs: ["15901"]
         "400":
           description: Bad Request (missing/invalid parameters)
           content:
@@ -1897,7 +1923,99 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ErrorResponse" }
 
-  /v1.1/portfolios/{portfolio_id}/positions:
+  /v1.1/data/positions:
+    get:
+      tags: [Portfolio data]
+      summary: Positions snapshot by date
+      description: |
+        Returns custody positions (cash + securities) for all portfolios as of a given date.
+        If no custodian_id is provided, includes positions from all *ready* custodians and omits not-ready ones.
+        If a custodian_id is provided and that custodian is not ready, returns 409 Conflict.
+      operationId: listPositions
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: as_of_date
+          required: true
+          description: Snapshot date (YYYY-MM-DD)
+          schema: { type: string, format: date }
+        - in: query
+          name: custodian_id
+          required: false
+          description: Filter to a single custodian. If provided and not ready -> 409.
+          schema: { type: string }
+        - in: query
+          name: portfolio_id
+          required: false
+          description: Optional filter to one portfolio (or multiple via repeated param).
+          schema: { type: string }
+          style: form
+          explode: true
+        - in: query
+          name: type
+          required: false
+          description: Filter by position type
+          schema:
+            type: string
+            enum: [all, security, cash]
+            default: all
+        - in: query
+          name: page_size
+          required: false
+          description: Number of records per page (max 5000)
+          schema: { type: integer, minimum: 1, maximum: 5000, default: 1000 }
+        - in: query
+          name: cursor
+          required: false
+          description: Opaque pagination cursor returned by the previous page
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PositionsCollectionResponse"
+              examples:
+                allReadyCustodians:
+                  summary: No custodian filter → includes all ready custodians
+                  value:
+                    as_of_date: "2025-09-01"
+                    included_custodians: ["BIL LU","EFG MC"]
+                    excluded_custodians:
+                      - { custodian_id: "BDL LU", positions_status: "failed" }
+                    positions:
+                      - { date: "2025-09-01", portfolio_custodian_id: "ACCT-1", portfolio_id: "PF-001", portfolio_currency_id: "EUR", is_cash: true, security_other_code: [], security_bank_id: null, security_id: null, security_name: "CASH EUR", security_currency_id: "EUR", security_multiplier: 1.0, security_sector_id: null, security_country_id: null, security_asset_class_id: "CA", security_industry_id: "-", quantity: "25000.5500", price_date: "2025-09-01", price: "1.0000", market_value_security_ccy: "25000.55", market_value_portfolio_ccy: "25000.55", cost_price: null, accrued_interest: null, custodian_id: "BIL LU", importation_time: "2025-09-01T05:42:11Z" }
+                    next_cursor: "eyJvZmZzZXQiOiJCTFVYTFVMTCIsInBvcyI6IjAwMDAwMDAxIn0="
+        "409":
+          description: Conflict — requested custodian not ready
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+              examples:
+                notReadyCustodian:
+                  value:
+                    error: data_not_ready
+                    message: "Positions not ready for custodian BIL LU on 2025-09-01."
+                    details:
+                      as_of_date: "2025-09-01"
+                      custodian_id: "BIL LU"
+                      positions_status: "partial"
+        "422":
+          description: Unprocessable Entity (invalid parameters)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "429": { description: Too Many Requests }
+        "500":
+          description: Server Error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+
+  /v1.1/data/portfolios/{portfolio_id}/positions:
     get:
       tags: [Portfolio data]
       summary: Positions snapshot by portfolio and date
@@ -1956,7 +2074,7 @@ paths:
                   value:
                     portfolio_id: PF-001
                     as_of_date: "2025-09-01"
-                    ingestion_run_id: ing-20250901-001
+                    ingestion_run_id: 15899
                     positions:
                       - date: "2025-09-01"
                         portfolio_custodian_id: ACCT-12345
@@ -1990,7 +2108,7 @@ paths:
                   value:
                     portfolio_id: PF-001
                     as_of_date: "2025-09-01"
-                    ingestion_run_id: ing-20250901-001
+                    ingestion_run_id: 15899
                     positions: []
                     next_cursor: null
         "404":
