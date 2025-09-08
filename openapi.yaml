@@ -710,7 +710,7 @@ components:
         securityName: { type: string, nullable: true }
         securityCurrencyId: { type: string, nullable: true }
         securityMultiplier: { type: number, format: double, nullable: true }
-        securityCectorId:
+        securitySectorId:
           nullable: true 
           $ref: "#/components/schemas/SecuritySectorEnum"
         securityCountryId: { type: string, nullable: true, description: "ISO 3166 country code" }
