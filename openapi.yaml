@@ -309,6 +309,10 @@ components:
           type: string
           enum: [low, medium, high]
           description: AML risk rating assigned to the business relation.
+        dueDiligenceType:
+          type: string
+          enum: [simplified, standard, enhanced]
+          description: Due diligence type requested for the business relation.          
         relationAcceptanceStatus:
           type: string
           enum: [approved, restricted, rejected]
@@ -1487,6 +1491,7 @@ paths:
                 $ref: '#/components/schemas/AmlKycResult'
               example:
                 amlRiskRating: high
+                dueDiligenceType: enhanced
                 relationAcceptanceStatus: restricted
                 isPep: true
                 isSanctioned: false
