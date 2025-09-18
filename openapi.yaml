@@ -1878,7 +1878,7 @@ paths:
           schema:
             type: string
             enum: [POSITIONS, TRANSACTIONS, BOTH]
-            default: both
+            default: BOTH
         - in: query
           name: includeNotes
           required: false
