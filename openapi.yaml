@@ -2035,7 +2035,7 @@ paths:
                     excludedCustodians:
                       - { custodianId: "BDL LU", positionsStatus: "FAILED" }
                     positions:
-                      - { date: "2025-09-01", portfolioCustodianId: "ACCT-1", portfolioId: "PF-001", portfolioCurrencyId: "EUR", crmCode: "Eric Barron", portfolioManager: "Bill Deck" isCash: true, securityOtherCode: [], securityBankId: null, securityId: null, securityName: "CASH EUR", securityCurrencyId: "EUR", securityMultiplier: 1.0, securitySectorId: null, securityCountryId: null, securityAssetClassId: "CA", securityIndustryId: "-", quantity: "25000.5500", priceDate: "2025-09-01", price: "1.0000", marketValueSecurityCcy: "25000.55", marketValuePortfolioCcy: "25000.55", costPrice: null, accruedInterest: null, custodianId: "BIL LU", importationTime: "2025-09-01T05:42:11Z" }
+                      - { date: "2025-09-01", portfolioCustodianId: "ACCT-1", portfolioId: "PF-001", portfolioCurrencyId: "EUR", crmCode: "Eric Baron", portfolioManager: "Bill Deck" isCash: true, securityOtherCode: [], securityBankId: null, securityId: null, securityName: "CASH EUR", securityCurrencyId: "EUR", securityMultiplier: 1.0, securitySectorId: null, securityCountryId: null, securityAssetClassId: "CA", securityIndustryId: "-", quantity: "25000.5500", priceDate: "2025-09-01", price: "1.0000", marketValueSecurityCcy: "25000.55", marketValuePortfolioCcy: "25000.55", costPrice: null, accruedInterest: null, custodianId: "BIL LU", importationTime: "2025-09-01T05:42:11Z" }
                     nextCursor: "eyJvZmZzZXQiOiJCTFVYTFVMTCIsInBvcyI6IjAwMDAwMDAxIn0="
         "409":
           description: Conflict — requested custodian not ready
