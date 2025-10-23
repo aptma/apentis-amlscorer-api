@@ -999,13 +999,10 @@ paths:
                 city: Warsaw
                 countryOfResidence: PL
                 language: EN
-                incorporationDate: null
                 birthDate: 1985-09-12
                 placeOfBirth: Krakow
                 maritalStatus: Married
                 taxIdentificationNumber: PL1234567890
-                vatNumber: null
-                legalForm: null
                 phoneNumber: "+48 123 456 789"
                 email: anna.nowak@example.com
                 relationshipStatus: Client
