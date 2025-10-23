@@ -308,15 +308,19 @@ components:
         amlRiskRating:
           type: string
           enum: [low, medium, high]
-          description: AML risk rating assigned to the business relation.
+          description: The overall risk level assigned to a business relation based on the combination of screening results (PEP, sanctions, adverse media), country risk, business activity, and other risk attributes. It determines whether the relationship is considered Low, Medium, or High risk from an Anti-Money Laundering and Counter-Terrorism Financing (AML/CTF) standpoint.
         dueDiligenceType:
           type: string
           enum: [simplified, standard, enhanced]
-          description: Due diligence type requested for the business relation.          
+          description: Specifies whether the business relation requires additional verification and monitoring measures beyond standard KYC checks, due to the AML risk level or specific red flags.          
         relationAcceptanceStatus:
           type: string
-          enum: [approved, restricted, rejected]
-          description: Final decision on whether the business relation is accepted.
+          enum: [approved, conditional, revoked]
+          description: Indicates the internal decision regarding the acceptance of the business relation following the AML assessment.
+        accountStatus:  
+          type: string
+          enum: [active, soft blocked, hard blocked]
+          description: Shows the operational status of the client’s account based on AML findings and internal controls.          
         isPep:
           type: boolean
           description: Whether the business relation is identified as a Politically Exposed Person (PEP).
@@ -331,6 +335,10 @@ components:
           type: string
           format: date
           description: Date of the most recent KYC review (YYYY-MM-DD).
+        nextKycReviewDate:
+          type: string
+          format: date
+          description: Date of the next KYC review (YYYY-MM-DD).          
         missingDocuments:
           type: array
           items:
@@ -1492,13 +1500,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/AmlKycResult'
               example:
-                amlRiskRating: high
-                dueDiligenceType: enhanced
-                relationAcceptanceStatus: restricted
-                isPep: true
+                amlRiskRating: low
+                dueDiligenceType: standard
+                relationAcceptanceStatus: approved
+                accountStatus: active
+                isPep: false
                 isSanctioned: false
                 kycStatus: to review
-                lastKycReviewDate: 2024-11-15
+                lastKycReviewDate: 2025-09-15
+                nextKycReviewDate: 2026-09-15                
                 missingDocuments:
                   - Proof of domicile
                   - Financial statement
