@@ -1542,6 +1542,57 @@ paths:
                 error: "Internal Server Error"
                 code: 500
 
+  /v1.1/business-relations/{crmCode}/aml-kyc-report:
+    get:
+      summary: Download the latest NameCheck report for a business relation
+      description: Returns the most recently generated NameCheck report as a PDF document.
+      tags:
+        - AML/KYC results
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      responses:
+        '200':
+          description: Latest NameCheck report retrieved successfully
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized - Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '404':
+          description: Not Found - Report not available for the specified business relation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - NameCheck report not available for the specified crmCode"
+                code: 404
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
+
   /v1.1/business-relations/{crmCode}/investor-commitments:
     post:
       summary: Register a new fund commitment by an investor
