@@ -810,6 +810,80 @@ components:
 
 paths:
   /v1.1/business-relations:
+    get:
+      summary: Retrieve business relations
+      description: >-
+        Returns the list of business relations. By default, terminated business relations
+        are excluded unless `includeTerminated` is set to `true`.
+      tags:
+        - Business relations
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: includeTerminated
+          schema:
+            type: boolean
+            default: false
+          description: >-
+            When set to `true`, the response will also contain business relations with a terminated status.
+      responses:
+        '200':
+          description: Business relations retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusinessRelation'
+              example:
+                - type: Person
+                  name: Anna Nowak
+                  firstName: Anna
+                  lastName: Nowak
+                  nationality: PL
+                  fiscalCountry: PL
+                  address: 12A Nowy Swiat
+                  postalCode: 80-145
+                  city: Warsaw
+                  countryOfResidence: PL
+                  language: EN
+                  birthDate: 1985-09-12
+                  placeOfBirth: Krakow
+                  maritalStatus: Married
+                  taxIdentificationNumber: PL1234567890
+                  phoneNumber: "+48 123 456 789"
+                  email: anna.nowak@example.com
+                  relationshipStatus: Client
+                  relationStatus: active
+                  crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  crmCode: CUST-PL-2024-0001
+                - type: Company
+                  name: Example Holdings SA
+                  registrationNumber: LU12345678
+                  countryOfResidence: LU
+                  relationshipStatus: Prospect
+                  relationStatus: terminated
+                  crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
+                  crmCode: CUST-LU-2023-0007
+        '401':
+          description: Unauthorized - Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
     post:
       summary: Create a new business relation
       tags:
