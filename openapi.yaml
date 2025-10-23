@@ -219,10 +219,17 @@ components:
           type: string
           maxLength: 2
           description: Language code (ISO 639-1) of the business relation.
+        incorporationDate:
+          type: string
+          format: date
+          description: Date of incorporation for legal entities (YYYY-MM-DD).
         birthDate:
           type: string
           format: date
           description: Date of birth of the person (YYYY-MM-DD). Optional.
+        placeOfBirth:
+          type: string
+          description: Place of birth. Applicable for persons.
         phoneNumber:
           type: string
           description: Phone number of the business relation. Optional.
@@ -241,10 +248,28 @@ components:
           enum: [active, terminated]
           default: active
           description: Status of the business relation.
+        crmId:
+          type: string
+          format: uuid
+          description: Internal Apentis UUID that uniquely identifies the client.
         crmCode:
           type: string
           maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
+        maritalStatus:
+          type: string
+          enum: [Single, Married, Divorced, Separated, Widower, Other, Partnership]
+          description: Marital status of the person.
+        taxIdentificationNumber:
+          type: string
+          description: Tax identification number of the business relation.
+        vatNumber:
+          type: string
+          description: VAT number of the business relation.
+        legalForm:
+          type: string
+          enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
+          description: Legal form of the entity. Applicable for legal entities only.
 
     InvestorCommitment:
       type: object
@@ -974,11 +999,18 @@ paths:
                 city: Warsaw
                 countryOfResidence: PL
                 language: EN
+                incorporationDate: null
                 birthDate: 1985-09-12
+                placeOfBirth: Krakow
+                maritalStatus: Married
+                taxIdentificationNumber: PL1234567890
+                vatNumber: null
+                legalForm: null
                 phoneNumber: "+48 123 456 789"
                 email: anna.nowak@example.com
                 relationshipStatus: Client
                 relationStatus: active
+                crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 crmCode: CUST-PL-2024-0001
         '401':
           description: Unauthorized - Missing or invalid token
