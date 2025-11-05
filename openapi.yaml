@@ -270,6 +270,11 @@ components:
           type: string
           enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
           description: Legal form of the entity. Applicable for legal entities only.
+        dmsLinkUrl:
+          type: string
+          format: uri
+          maxLength: 500
+          description: Optional link to the client's document management system (DMS) folder.
 
     InvestorCommitment:
       type: object
