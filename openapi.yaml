@@ -332,6 +332,37 @@ components:
           maxLength: 2
           description: ISO 2-letter country code of the country that has issued the document (e.g., 'US', 'FR').
 
+    DocumentWithFile:
+      type: object
+      description: Combined metadata and binary payload for a stored document.
+      required:
+        - metadata
+        - file
+      properties:
+        metadata:
+          $ref: '#/components/schemas/DocumentMetadata'
+        file:
+          type: object
+          required:
+            - fileName
+            - contentType
+            - contentBase64
+          properties:
+            fileName:
+              type: string
+              description: Original name of the uploaded document.
+            contentType:
+              type: string
+              description: MIME type of the stored file (e.g., application/pdf, image/jpeg).
+            fileSizeBytes:
+              type: integer
+              format: int64
+              description: Size of the document in bytes.
+            contentBase64:
+              type: string
+              format: byte
+              description: Base64-encoded binary content of the document for direct retrieval via the API.
+
     AmlKycResult:
       type: object
       properties:
@@ -1236,7 +1267,17 @@ paths:
                 code: 500
 
     get:
-      summary: Retrieve documents associated with a business relation
+      summary: Retrieve documents (metadata + binary files) associated with a business relation
+      description: |
+        Returns the metadata together with the binary representation of every stored document for the specified
+        business relation. Each document entry includes:
+
+        - The original metadata (type, issuer, expiration, etc.).
+        - File details (file name, MIME type, size) and a base64-encoded payload that can be directly persisted
+          to disk as PDF, JPEG, Word, etc.
+
+        Use the `/v1.1/business-relations/{crmCode}/documents/metadata-only` endpoint when you only require
+        metadata without files to reduce payload size.
       tags:
         - KYC documents
       security:
@@ -1256,22 +1297,34 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentMetadata'
+                  $ref: '#/components/schemas/DocumentWithFile'
               example:
-                - documentName: "Passport - Anna Nowak"
-                  documentType: "Passport"
-                  issuanceDate: "2020-04-10"
-                  expirationDate: "2030-04-10"
-                  documentNumber: "AA4538293"
-                  isCertifiedTrueCopy: true
-                  documentIssuer: "PL"
-                - documentName: "Proof of domicile - Anna Nowak"
-                  documentType: "Proof of domicile"
-                  issuanceDate: "2024-01-05"
-                  expirationDate: "2025-01-05"
-                  documentNumber: "DOM-112233"
-                  isCertifiedTrueCopy: false
-                  documentIssuer: "PL"
+                - metadata:
+                    documentName: "Passport - Anna Nowak"
+                    documentType: "Passport"
+                    issuanceDate: "2020-04-10"
+                    expirationDate: "2030-04-10"
+                    documentNumber: "AA4538293"
+                    isCertifiedTrueCopy: true
+                    documentIssuer: "PL"
+                  file:
+                    fileName: "passport-anna-nowak.pdf"
+                    contentType: "application/pdf"
+                    fileSizeBytes: 248123
+                    contentBase64: "JVBERi0xLjMKJcTl8uXrp..."
+                - metadata:
+                    documentName: "Proof of domicile - Anna Nowak"
+                    documentType: "Proof of domicile"
+                    issuanceDate: "2024-01-05"
+                    expirationDate: "2025-01-05"
+                    documentNumber: "DOM-112233"
+                    isCertifiedTrueCopy: false
+                    documentIssuer: "PL"
+                  file:
+                    fileName: "utility-bill-2024-01.pdf"
+                    contentType: "application/pdf"
+                    fileSizeBytes: 145892
+                    contentBase64: "JVBERi0xLjMKJcTl8uXrp..."
         '401':
           description: Unauthorized - Missing or invalid token
           content:
