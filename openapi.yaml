@@ -381,13 +381,28 @@ components:
         accountStatus:  
           type: string
           enum: [active, soft blocked, hard blocked]
-          description: Shows the operational status of the client’s account based on AML findings and internal controls.          
+          description: Shows the operational status of the client’s account based on AML findings and internal controls.
+        nbrHits:
+          type: integer
+          format: int32
+          description: Total number of AML screening hits identified for the business relation.
+        nbrArticles:
+          type: integer
+          format: int32
+          description: Total number of adverse media (bad press) articles linked to the business relation.          
         isPep:
           type: boolean
           description: Whether the business relation is identified as a Politically Exposed Person (PEP).
         isSanctioned:
           type: boolean
           description: Whether the business relation appears on a sanctions list.
+        amlReviewedBy:
+          type: string
+          description: Name or identifier of the compliance officer who last reviewed the AML data.
+        amlReviewDate:
+          type: string
+          format: date
+          description: Date (YYYY-MM-DD) when the AML review was performed.
         kycStatus:
           type: string
           enum: [to review, reviewed]
@@ -410,6 +425,13 @@ components:
           items:
             $ref: '#/components/schemas/DocumentTypeEnum'
           description: List of expired document types.
+        kycReviewedBy:
+          type: string
+          description: Name or identifier of the compliance officer who last reviewed the KYC data.
+        kycReviewDate:
+          type: string
+          format: date
+          description: Date (YYYY-MM-DD) when the KYC review was performed.
 
     BusinessRelationLink:
       type: object
@@ -1665,16 +1687,22 @@ paths:
                 dueDiligenceType: standard
                 relationAcceptanceStatus: approved
                 accountStatus: active
+                nbrHits: 2
+                nbrArticles: 1
                 isPep: false
                 isSanctioned: false
+                amlReviewedBy: jane.doe
+                amlReviewDate: 2025-09-16
                 kycStatus: to review
                 lastKycReviewDate: 2025-09-15
-                nextKycReviewDate: 2026-09-15                
+                nextKycReviewDate: 2026-09-15
                 missingDocuments:
                   - Proof of domicile
                   - Financial statement
                 expiredDocuments:
                   - ID card scan
+                kycReviewedBy: john.doe
+                kycReviewDate: 2025-09-15
         '401':
           description: Unauthorized - Missing or invalid token
           content:
