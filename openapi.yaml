@@ -207,10 +207,6 @@ components:
           type: string
           maxLength: 2
           description: ISO 2-letter fiscal country code.
-        countryOfOperation:
-          type: string
-          maxLength: 2
-          description: ISO 2-letter country of operation. Applicable for companies.
         address:
           type: string
           description: Street address of the business relation.
@@ -228,10 +224,6 @@ components:
           type: string
           maxLength: 2
           description: Language code (ISO 639-1) of the business relation.
-        incorporationDate:
-          type: string
-          format: date
-          description: Date of incorporation for legal entities (YYYY-MM-DD).
         birthDate:
           type: string
           format: date
@@ -272,30 +264,11 @@ components:
         taxIdentificationNumber:
           type: string
           description: Tax identification number of the business relation.
-        vatNumber:
-          type: string
-          description: VAT number of the business relation.
-        legalForm:
-          type: string
-          enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
-          description: Legal form of the entity. Applicable for legal entities only.
         dmsLinkUrl:
           type: string
           format: uri
           maxLength: 500
           description: Optional link to the client's document management system (DMS) folder.
-      oneOf:
-        - properties:
-            type:
-              enum: [Person]
-          required:
-            - firstName
-            - lastName
-        - properties:
-            type:
-              enum: [Association, Company, Family, Foundation, Fund, Household, "Insurance company", "Insurance contract", "Joint ownership", Partnership, Trust]
-          required:
-            - name
 
     CompanyBusinessRelation:
       type: object
