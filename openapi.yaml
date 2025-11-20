@@ -330,7 +330,7 @@ components:
       properties:
         type:
           type: string
-          enum: [Association, Company, Family, Foundation, Fund, Household, "Insurance company", "Insurance contract", "Joint ownership", Partnership, Trust]
+          enum: [Association, Company, Family, Foundation, Fund, Household, "Insurance company", "Insurance contract", "Joint ownership", Partnership, Trust, "Pension scheme"]
           description: Type of business relation.
         name:
           type: string
