@@ -264,6 +264,57 @@ components:
         taxIdentificationNumber:
           type: string
           description: Tax identification number of the business relation.
+        wealthSource:
+          type: array
+          description: Sources of wealth of the business relation.
+          items:
+            type: string
+            enum:
+              - entrepreneurial_activity
+              - salaries_remuneration
+              - inheritance
+              - real_estate
+              - financial_investments
+              - donation_gifts_from_family
+              - donation_gifts_from_others
+              - divorce
+              - loan_leverage
+              - accumulated_profit
+              - capital_from_shareholders
+              - crypto_assets
+              - company_sale_ma_exit
+              - insurance_payout
+              - pension_retirement_fund
+              - litigation_compensation
+              - lottery_gambling
+        bankAccountCountry:
+          type: string
+          maxLength: 2
+          description: ISO 2-letter country code of the bank account.
+        originOfBusinessRelation:
+          type: string
+          enum:
+            - business_intermediary
+            - spontaneous_approach
+            - relation_with_existing_client
+            - historical_client
+            - distributor
+            - tied_agent
+            - family_relation_of_employee
+            - family_relationship
+            - electronic_platform
+            - prospection
+            - other
+          description: Origin of the business relation.
+        crsStatus:
+          type: string
+          enum:
+            - crs_compliant
+            - missing_documentation
+            - conflicting_indicia
+            - cbi_rbi_scheme
+            - non_crs
+          description: Common Reporting Standard status.
         dmsLinkUrl:
           type: string
           format: uri
@@ -349,6 +400,66 @@ components:
           type: string
           enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
           description: Legal form of the entity. Applicable for legal entities only.
+        wealthSource:
+          type: array
+          description: Sources of wealth of the business relation.
+          items:
+            type: string
+            enum:
+              - entrepreneurial_activity
+              - salaries_remuneration
+              - inheritance
+              - real_estate
+              - financial_investments
+              - donation_gifts_from_family
+              - donation_gifts_from_others
+              - divorce
+              - loan_leverage
+              - accumulated_profit
+              - capital_from_shareholders
+              - crypto_assets
+              - company_sale_ma_exit
+              - insurance_payout
+              - pension_retirement_fund
+              - litigation_compensation
+              - lottery_gambling
+        bankAccountCountry:
+          type: string
+          maxLength: 2
+          description: ISO 2-letter country code of the bank account.
+        originOfBusinessRelation:
+          type: string
+          enum:
+            - business_intermediary
+            - spontaneous_approach
+            - relation_with_existing_client
+            - historical_client
+            - distributor
+            - tied_agent
+            - family_relation_of_employee
+            - family_relationship
+            - electronic_platform
+            - prospection
+            - other
+          description: Origin of the business relation.
+        crsStatus:
+          type: string
+          enum:
+            - crs_compliant
+            - missing_documentation
+            - conflicting_indicia
+            - cbi_rbi_scheme
+            - non_crs
+          description: Common Reporting Standard status.
+        listedCompany:
+          type: boolean
+          description: Indicates whether the company is listed.
+        regulatedEntity:
+          type: boolean
+          description: Indicates whether the entity is regulated.
+        stateOwnedEntity:
+          type: boolean
+          description: Indicates whether the entity is state-owned.
         dmsLinkUrl:
           type: string
           format: uri
@@ -981,6 +1092,11 @@ paths:
                   placeOfBirth: Krakow
                   maritalStatus: Married
                   taxIdentificationNumber: PL1234567890
+                  wealthSource:
+                    - salaries_remuneration
+                  bankAccountCountry: PL
+                  originOfBusinessRelation: relation_with_existing_client
+                  crsStatus: crs_compliant
                   phoneNumber: "+48 123 456 789"
                   email: anna.nowak@example.com
                   relationshipStatus: Client
@@ -991,6 +1107,16 @@ paths:
                   name: Example Holdings SA
                   registrationNumber: LU12345678
                   countryOfResidence: LU
+                  countryOfOperation: LU
+                  wealthSource:
+                    - accumulated_profit
+                    - company_sale_ma_exit
+                  bankAccountCountry: LU
+                  originOfBusinessRelation: business_intermediary
+                  crsStatus: crs_compliant
+                  listedCompany: true
+                  regulatedEntity: true
+                  stateOwnedEntity: false
                   relationshipStatus: Prospect
                   relationStatus: terminated
                   crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
@@ -1038,6 +1164,12 @@ paths:
               countryOfResidence: PL
               language: EN
               birthDate: 1985-09-12
+              wealthSource:
+                - salaries_remuneration
+                - financial_investments
+              bankAccountCountry: PL
+              originOfBusinessRelation: prospection
+              crsStatus: crs_compliant
               phoneNumber: '+48 123 456 789'
               email: anna.nowak@example.com
               relationshipStatus: Client
@@ -1118,6 +1250,7 @@ paths:
             example:
               phoneNumber: "+352 456 789"
               email: claire.lefebvre@client.eu
+              originOfBusinessRelation: spontaneous_approach
       responses:
         '200':
           description: Business relation updated successfully
@@ -1206,6 +1339,12 @@ paths:
                 placeOfBirth: Krakow
                 maritalStatus: Married
                 taxIdentificationNumber: PL1234567890
+                wealthSource:
+                  - salaries_remuneration
+                  - real_estate
+                bankAccountCountry: PL
+                originOfBusinessRelation: relation_with_existing_client
+                crsStatus: crs_compliant
                 phoneNumber: "+48 123 456 789"
                 email: anna.nowak@example.com
                 relationshipStatus: Client
