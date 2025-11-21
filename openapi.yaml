@@ -257,6 +257,25 @@ components:
           type: string
           maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
+        service:
+          type: string
+          enum:
+            - portfolio_management_discretionary
+            - portfolio_management_advisory
+            - portfolio_management_rto
+            - portfolio_management_non_discretionary_advisory
+            - fund_setup_and_administration
+            - family_office
+            - tax_planning_and_optimization
+            - wealth_structuring
+            - philanthropy_advisory
+            - estate_planning
+          description: Service associated with the business relation.
+        branch:
+          type: array
+          description: Branches associated with the business relation.
+          items:
+            type: string
         maritalStatus:
           type: string
           enum: [Single, Married, Divorced, Separated, Widower, Other, Partnership]
@@ -390,12 +409,65 @@ components:
           type: string
           maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
+        service:
+          type: string
+          enum:
+            - portfolio_management_discretionary
+            - portfolio_management_advisory
+            - portfolio_management_rto
+            - portfolio_management_non_discretionary_advisory
+            - fund_setup_and_administration
+            - family_office
+            - tax_planning_and_optimization
+            - wealth_structuring
+            - philanthropy_advisory
+            - estate_planning
+          description: Service associated with the business relation.
         taxIdentificationNumber:
           type: string
           description: Tax identification number of the business relation.
         vatNumber:
           type: string
           description: VAT number of the business relation.
+        industrySector:
+          type: string
+          enum:
+            - a_agriculture_forestry_and_fishing
+            - b_mining_and_quarrying
+            - c_manufacturing
+            - d_electricity_gas_steam_and_air_conditioning_supply
+            - e_water_supply_sewerage_waste_management_and_remediation
+            - f_construction
+            - g_wholesale_and_retail_trade_motor_vehicles
+            - h_transporting_and_storage
+            - i_accommodation_and_food_service_activities
+            - j_information_and_communication
+            - k_financial_and_insurance_activities
+            - l_real_estate_activities
+            - m_professional_scientific_and_technical_activities
+            - n_administrative_and_support_service_activities
+            - o_public_administration_and_defence
+            - p_education
+            - q_human_health_and_social_work_activities
+            - r_arts_entertainment_and_recreation
+            - s_other_services_activities
+            - t_households_as_employers_and_own_use_activities
+            - u_extraterritorial_organisations_and_bodies
+          description: Industry sector classification for the company.
+        complexityOfBoStructure:
+          type: string
+          enum:
+            - a_less_than_3_structure_level_in_eu_countries
+            - b_less_than_3_structure_level_in_any_country
+            - c_3_to_6_structure_level_in_eu_countries
+            - d_3_to_6_structure_level_in_any_countries
+            - e_more_than_6_structure_level
+          description: Complexity level of the beneficial ownership structure.
+        branch:
+          type: array
+          description: Branches associated with the business relation.
+          items:
+            type: string
         legalForm:
           type: string
           enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
@@ -1097,6 +1169,9 @@ paths:
                   bankAccountCountry: PL
                   originOfBusinessRelation: relation_with_existing_client
                   crsStatus: crs_compliant
+                  service: wealth_structuring
+                  branch:
+                    - Apentis LU
                   phoneNumber: "+48 123 456 789"
                   email: anna.nowak@example.com
                   relationshipStatus: Client
@@ -1114,6 +1189,11 @@ paths:
                   bankAccountCountry: LU
                   originOfBusinessRelation: business_intermediary
                   crsStatus: crs_compliant
+                  service: portfolio_management_discretionary
+                  industrySector: k_financial_and_insurance_activities
+                  complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
+                  branch:
+                    - Apentis FR
                   listedCompany: true
                   regulatedEntity: true
                   stateOwnedEntity: false
@@ -1170,6 +1250,9 @@ paths:
               bankAccountCountry: PL
               originOfBusinessRelation: prospection
               crsStatus: crs_compliant
+              service: philanthropy_advisory
+              branch:
+                - Apentis LU
               phoneNumber: '+48 123 456 789'
               email: anna.nowak@example.com
               relationshipStatus: Client
@@ -1251,6 +1334,9 @@ paths:
               phoneNumber: "+352 456 789"
               email: claire.lefebvre@client.eu
               originOfBusinessRelation: spontaneous_approach
+              service: wealth_structuring
+              branch:
+                - Apentis FR
       responses:
         '200':
           description: Business relation updated successfully
@@ -1345,6 +1431,9 @@ paths:
                 bankAccountCountry: PL
                 originOfBusinessRelation: relation_with_existing_client
                 crsStatus: crs_compliant
+                service: wealth_structuring
+                branch:
+                  - Apentis LU
                 phoneNumber: "+48 123 456 789"
                 email: anna.nowak@example.com
                 relationshipStatus: Client
