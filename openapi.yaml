@@ -5,8 +5,8 @@ info:
   description: |
     This API enables external systems — such as CRMs, onboarding tools, or custom platforms — to integrate securely with the Apentis platform.
 
-    For full documentation, usage examples and changelogs, please see:
-    [README on GitHub](https://github.com/aptma/apentis-amlscorer-api?tab=readme-ov-file#readme)
+    For full documentation, usage examples and changelogs, please see our GitBook:
+    [Apentis API Documentation](https://apentis.gitbook.io/apentis-api/)
 
     ## Authentication
 
@@ -644,7 +644,7 @@ components:
             - Beneficial owner
             - Member
             - Shareholder
-          description: The role of the linked business relation in relation to the main one. Please see the README file to see authorized links between entities.
+          description: The role of the linked business relation in relation to the main one. Please see the GitBook documentation to see authorized links between entities.
 
     BusinessRelationLinkDeleteRequest:
         type: array
