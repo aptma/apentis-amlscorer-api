@@ -69,6 +69,26 @@ tags:
   - name: Portfolio data
     description: Read-only endpoints to check data readiness and retrieve normalized custody **positions** and **transactions** (aggregated across custodians and portfolios).
 
+x-tagGroups:
+  - name: Business relations
+    tags:
+      - Business relations
+      - Business relation links
+
+  - name: AML/KYC
+    tags:
+      - KYC documents
+      - AML/KYC results
+      - Cashflow monitoring
+
+  - name: Investor commitments
+    tags:
+      - Investor commitments
+
+  - name: Portfolio data
+    tags:
+      - Portfolio data
+
 components:
   securitySchemes:
     bearerAuth:
