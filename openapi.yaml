@@ -56,16 +56,16 @@ security:
 tags:
   - name: Business relations
     description: Endpoints for creating, retrieving, updating, and managing business relations (individuals and entities).
+  - name: Business relations links
+    description: Endpoints for defining and managing relationships between two business relations.    
   - name: KYC documents
     description: Endpoints for uploading, retrieving, and managing KYC documents and metadata associated with a business relation.
-  - name: Business relation links
-    description: Endpoints for defining and managing relationships between two business relations (e.g., person ↔ company, director ↔ entity).
   - name: AML/KYC results
     description: Endpoints for retrieving AML/KYC assessments, including risk rating, acceptance status, PEP/sanction screening, and document completeness.
+  - name: Cashflow monitoring
+    description: Endpoints for submitting cash transactions and retrieving AML cashflow monitoring results.    
   - name: Investor commitments
     description: Endpoints for registering and managing fund commitments made by investors.
-  - name: Cashflow monitoring
-    description: Endpoints for submitting cash transactions and retrieving AML cashflow monitoring results.
   - name: Portfolio data
     description: Read-only endpoints to verify data availability and retrieve normalized custody positions and transactions (aggregated across custodians and portfolios).
 
@@ -73,7 +73,7 @@ x-tagGroups:
   - name: Business relations
     tags:
       - Business relations
-      - Business relation links
+      - Business relations links
 
   - name: AML/KYC
     tags:
@@ -1929,7 +1929,7 @@ paths:
     post:
       summary: Link multiple business relations to a primary one
       tags:
-        - Business relation links
+        - Business relations links
       security:
         - bearerAuth: []
       parameters:
@@ -2002,7 +2002,7 @@ paths:
     delete:
       summary: Delete business relation links
       tags:
-        - Business relation links
+        - Business relations links
       security:
         - bearerAuth: []
       parameters:
