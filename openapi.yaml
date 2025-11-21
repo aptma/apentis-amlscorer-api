@@ -289,21 +289,12 @@ components:
           type: array
           items:
             type: string
-            enum:
-              - portfolio_management_discretionary
-              - portfolio_management_advisory
-              - portfolio_management_rto
-              - portfolio_management_non_discretionary_advisory
-              - fund_setup_and_administration
-              - family_office
-              - tax_planning_and_optimization
-              - wealth_structuring
-              - philanthropy_advisory
-              - estate_planning
-          description: Services associated with the business relation.
+          description: Services associated with the business relation. Default values provided by Apentis include: portfolio_management_discretionary, portfolio_management_advisory, portfolio_management_rto, portfolio_management_non_discretionary_advisory, fund_setup_and_administration, family_office, tax_planning_and_optimization, wealth_structuring, philanthropy_advisory, estate_planning. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         branch:
           type: array
-          description: Branches associated with the business relation.
+          description: Branches associated with the business relation. Default values provided by Apentis include: organisation-specific branch identifiers. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
           items:
             type: string
         maritalStatus:
@@ -443,18 +434,8 @@ components:
           type: array
           items:
             type: string
-            enum:
-              - portfolio_management_discretionary
-              - portfolio_management_advisory
-              - portfolio_management_rto
-              - portfolio_management_non_discretionary_advisory
-              - fund_setup_and_administration
-              - family_office
-              - tax_planning_and_optimization
-              - wealth_structuring
-              - philanthropy_advisory
-              - estate_planning
-          description: Services associated with the business relation.
+          description: Services associated with the business relation. Default values provided by Apentis include: portfolio_management_discretionary, portfolio_management_advisory, portfolio_management_rto, portfolio_management_non_discretionary_advisory, fund_setup_and_administration, family_office, tax_planning_and_optimization, wealth_structuring, philanthropy_advisory, estate_planning. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         taxIdentificationNumber:
           type: string
           description: Tax identification number of the business relation.
@@ -463,41 +444,16 @@ components:
           description: VAT number of the business relation.
         industrySector:
           type: string
-          enum:
-            - a_agriculture_forestry_and_fishing
-            - b_mining_and_quarrying
-            - c_manufacturing
-            - d_electricity_gas_steam_and_air_conditioning_supply
-            - e_water_supply_sewerage_waste_management_and_remediation
-            - f_construction
-            - g_wholesale_and_retail_trade_motor_vehicles
-            - h_transporting_and_storage
-            - i_accommodation_and_food_service_activities
-            - j_information_and_communication
-            - k_financial_and_insurance_activities
-            - l_real_estate_activities
-            - m_professional_scientific_and_technical_activities
-            - n_administrative_and_support_service_activities
-            - o_public_administration_and_defence
-            - p_education
-            - q_human_health_and_social_work_activities
-            - r_arts_entertainment_and_recreation
-            - s_other_services_activities
-            - t_households_as_employers_and_own_use_activities
-            - u_extraterritorial_organisations_and_bodies
-          description: Industry sector classification for the company.
+          description: Industry sector classification for the company. Default values provided by Apentis include: a_agriculture_forestry_and_fishing, b_mining_and_quarrying, c_manufacturing, d_electricity_gas_steam_and_air_conditioning_supply, e_water_supply_sewerage_waste_management_and_remediation, f_construction, g_wholesale_and_retail_trade_motor_vehicles, h_transporting_and_storage, i_accommodation_and_food_service_activities, j_information_and_communication, k_financial_and_insurance_activities, l_real_estate_activities, m_professional_scientific_and_technical_activities, n_administrative_and_support_service_activities, o_public_administration_and_defence, p_education, q_human_health_and_social_work_activities, r_arts_entertainment_and_recreation, s_other_services_activities, t_households_as_employers_and_own_use_activities, u_extraterritorial_organisations_and_bodies. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         complexityOfBoStructure:
           type: string
-          enum:
-            - a_less_than_3_structure_level_in_eu_countries
-            - b_less_than_3_structure_level_in_any_country
-            - c_3_to_6_structure_level_in_eu_countries
-            - d_3_to_6_structure_level_in_any_countries
-            - e_more_than_6_structure_level
-          description: Complexity level of the beneficial ownership structure.
+          description: Complexity level of the beneficial ownership structure. Default values provided by Apentis include: a_less_than_3_structure_level_in_eu_countries, b_less_than_3_structure_level_in_any_country, c_3_to_6_structure_level_in_eu_countries, d_3_to_6_structure_level_in_any_countries, e_more_than_6_structure_level. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         branch:
           type: array
-          description: Branches associated with the business relation.
+          description: Branches associated with the business relation. Default values provided by Apentis include: organisation-specific branch identifiers. However, each client can configure its own list of acceptable values. Use the endpoint `/config/business-relation/schema` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
           items:
             type: string
         legalForm:
