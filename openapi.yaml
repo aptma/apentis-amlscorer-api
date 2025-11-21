@@ -1118,12 +1118,13 @@ paths:
   /v1.1/business-relations/schema-config:
     get:
       summary: Retrieve client-specific business relation schema
-      description: >-
+      description: |
         Returns only the fields in the BusinessRelation object for which the list of allowed values is customized per client.
         
         These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, etc.).
 
-        Standard fields with fixed values — such as gender, maritalStatus, or countryOfBirth — are not included in this response, as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
+        Standard fields with fixed values — such as gender, maritalStatus, or countryOfBirth — are not included in this response, 
+        as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
 
         This endpoint allows API consumers to dynamically retrieve the client-specific value lists for fields that support custom configuration.
       tags:
