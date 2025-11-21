@@ -1119,9 +1119,13 @@ paths:
     get:
       summary: Retrieve client-specific business relation schema
       description: >-
-        Returns only the business relation fields whose allowed values are client-specific
-        enumerations. Fixed fields (for example, gender or maritalStatus) remain documented in the
-        global OpenAPI schema.
+        Returns only the fields in the BusinessRelation object for which the list of allowed values is customized per client.
+        
+        These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, etc.).
+
+        Standard fields with fixed values — such as gender, maritalStatus, or countryOfBirth — are not included in this response, as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
+
+        This endpoint allows API consumers to dynamically retrieve the client-specific value lists for fields that support custom configuration.
       tags:
         - Business relations
       security:
@@ -1138,8 +1142,10 @@ paths:
                   service:
                     type: string
                     values:
-                      - Private Equity
-                      - Restructuring & Insolvency
+                      - private_equity
+                      - banking_finance_and_securitisation
+                      - real_estate_and_construction
+                      - company_law_mergers_acquisitions
                     isRequired: false
                     multiSelect: true
                   branch:
