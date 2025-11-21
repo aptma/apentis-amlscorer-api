@@ -258,19 +258,21 @@ components:
           maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
         service:
-          type: string
-          enum:
-            - portfolio_management_discretionary
-            - portfolio_management_advisory
-            - portfolio_management_rto
-            - portfolio_management_non_discretionary_advisory
-            - fund_setup_and_administration
-            - family_office
-            - tax_planning_and_optimization
-            - wealth_structuring
-            - philanthropy_advisory
-            - estate_planning
-          description: Service associated with the business relation.
+          type: array
+          items:
+            type: string
+            enum:
+              - portfolio_management_discretionary
+              - portfolio_management_advisory
+              - portfolio_management_rto
+              - portfolio_management_non_discretionary_advisory
+              - fund_setup_and_administration
+              - family_office
+              - tax_planning_and_optimization
+              - wealth_structuring
+              - philanthropy_advisory
+              - estate_planning
+          description: Services associated with the business relation.
         branch:
           type: array
           description: Branches associated with the business relation.
@@ -410,19 +412,21 @@ components:
           maxLength: 100
           description: Unique external identifier of the business relation from the calling system.
         service:
-          type: string
-          enum:
-            - portfolio_management_discretionary
-            - portfolio_management_advisory
-            - portfolio_management_rto
-            - portfolio_management_non_discretionary_advisory
-            - fund_setup_and_administration
-            - family_office
-            - tax_planning_and_optimization
-            - wealth_structuring
-            - philanthropy_advisory
-            - estate_planning
-          description: Service associated with the business relation.
+          type: array
+          items:
+            type: string
+            enum:
+              - portfolio_management_discretionary
+              - portfolio_management_advisory
+              - portfolio_management_rto
+              - portfolio_management_non_discretionary_advisory
+              - fund_setup_and_administration
+              - family_office
+              - tax_planning_and_optimization
+              - wealth_structuring
+              - philanthropy_advisory
+              - estate_planning
+          description: Services associated with the business relation.
         taxIdentificationNumber:
           type: string
           description: Tax identification number of the business relation.
@@ -1169,7 +1173,8 @@ paths:
                   bankAccountCountry: PL
                   originOfBusinessRelation: relation_with_existing_client
                   crsStatus: crs_compliant
-                  service: wealth_structuring
+                  service:
+                    - wealth_structuring
                   branch:
                     - Apentis LU
                   phoneNumber: "+48 123 456 789"
@@ -1189,7 +1194,8 @@ paths:
                   bankAccountCountry: LU
                   originOfBusinessRelation: business_intermediary
                   crsStatus: crs_compliant
-                  service: portfolio_management_discretionary
+                  service:
+                    - portfolio_management_discretionary
                   industrySector: k_financial_and_insurance_activities
                   complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
                   branch:
@@ -1250,7 +1256,8 @@ paths:
               bankAccountCountry: PL
               originOfBusinessRelation: prospection
               crsStatus: crs_compliant
-              service: philanthropy_advisory
+              service:
+                - philanthropy_advisory
               branch:
                 - Apentis LU
               phoneNumber: '+48 123 456 789'
@@ -1334,7 +1341,8 @@ paths:
               phoneNumber: "+352 456 789"
               email: claire.lefebvre@client.eu
               originOfBusinessRelation: spontaneous_approach
-              service: wealth_structuring
+              service:
+                - wealth_structuring
               branch:
                 - Apentis FR
       responses:
@@ -1431,7 +1439,8 @@ paths:
                 bankAccountCountry: PL
                 originOfBusinessRelation: relation_with_existing_client
                 crsStatus: crs_compliant
-                service: wealth_structuring
+                service:
+                  - wealth_structuring
                 branch:
                   - Apentis LU
                 phoneNumber: "+48 123 456 789"
