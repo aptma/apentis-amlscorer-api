@@ -64,7 +64,7 @@ tags:
     description: Access to the risk rating, acceptance status, PEP/sanction status, and document completeness of a business relation.
   - name: Investor commitments
     description: Endpoints related to investor fund commitments.
-  - name: Cash transactions
+  - name: Cashflow monitoring
     description: Endpoints for submitting and monitoring cash movements related to AML processes.
   - name: Portfolio data
     description: Read-only endpoints to check data readiness and retrieve normalized custody **positions** and **transactions** (aggregated across custodians and portfolios).
@@ -2252,7 +2252,7 @@ paths:
       summary: Submit client cash transactions for AML monitoring
       description: Send a cash transaction for automated AML/KYC evaluation.
       tags:
-        - Cash transactions
+        - Cashflow monitoring
       security:
         - bearerAuth: []
       requestBody:
@@ -2340,7 +2340,7 @@ paths:
     get:
       summary: Get AML cahsflow monitoring result for a cash transaction
       tags:
-        - Cash transactions      
+        - Cashflow monitoring
       parameters:
         - name: externalTransactionId
           in: path
@@ -2408,7 +2408,7 @@ paths:
     get:
       summary: List AML results for a business relation or portfolio
       tags:
-        - Cash transactions         
+        - Cashflow monitoring
       parameters:
         - name: crmCode
           in: query
