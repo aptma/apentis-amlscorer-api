@@ -77,6 +77,34 @@ components:
       bearerFormat: JWT
 
   schemas:
+    BusinessRelationSchemaField:
+      type: object
+      description: Metadata describing a client-specific selectable field for business relations.
+      properties:
+        type:
+          type: string
+          description: Data type of the field.
+        values:
+          type: array
+          description: Allowed values configured for the client.
+          items:
+            type: string
+        isRequired:
+          type: boolean
+          description: Indicates if the field is mandatory for the client.
+        multiSelect:
+          type: boolean
+          description: Indicates if multiple values can be selected.
+
+    TenantBusinessRelationSchemaResponse:
+      type: object
+      description: Response containing client-specific business relation fields.
+      properties:
+        fields:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/BusinessRelationSchemaField'
+
     DocumentTypeEnum:
       type: string
       description: Document types. See the "Document types" reference list in GitBook.
@@ -1125,6 +1153,42 @@ components:
           description: Application-specific or HTTP error code
 
 paths:
+  /config/business-relations/schema:
+    get:
+      summary: Retrieve client-specific business relation schema
+      description: >-
+        Returns only the business relation fields whose allowed values are client-specific
+        enumerations. Fixed fields (for example, gender or maritalStatus) remain documented in the
+        global OpenAPI schema.
+      tags:
+        - Business relations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Client-specific business relation schema retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantBusinessRelationSchemaResponse'
+              example:
+                fields:
+                  service:
+                    type: string
+                    values:
+                      - Private Equity
+                      - Restructuring & Insolvency
+                    isRequired: false
+                    multiSelect: true
+                  branch:
+                    type: string
+                    values:
+                      - Apple US
+                      - Apple FR
+                      - Apple CH
+                    isRequired: false
+                    multiSelect: true
+
   /v1.1/business-relations:
     get:
       summary: Retrieve business relations
