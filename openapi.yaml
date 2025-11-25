@@ -588,6 +588,9 @@ components:
           maxLength: 200
         documentType:
           $ref: '#/components/schemas/DocumentTypeEnum'
+        hasPhysicalFile:
+          type: boolean
+          description: Indicates whether a physical document file is stored alongside this metadata entry.
         issuanceDate:
           type: string
           format: date
@@ -1819,6 +1822,7 @@ paths:
               example:
                 - documentName: "Passport - Anna Nowak"
                   documentType: "Passport"
+                  hasPhysicalFile: true
                   issuanceDate: "2020-04-10"
                   expirationDate: "2030-04-10"
                   documentNumber: "AA4538293"
@@ -1826,6 +1830,7 @@ paths:
                   documentIssuer: "PL"
                 - documentName: "Proof of domicile - Anna Nowak"
                   documentType: "Proof of domicile"
+                  hasPhysicalFile: false
                   issuanceDate: "2024-01-05"
                   expirationDate: "2025-01-05"
                   documentNumber: "DOM-112233"
@@ -1880,6 +1885,7 @@ paths:
             example:
               documentName: "ID Card - Jean Dupont"
               documentType: "ID card scan"
+              hasPhysicalFile: false
               issuanceDate: "2019-05-01"
               expirationDate: "2029-05-01"
               documentNumber: "ID123456789"
