@@ -1579,6 +1579,7 @@ paths:
                       {
                         "documentName": "Passport - Anna Nowak",
                         "documentType": "Passport",
+                        "hasPhysicalFile": true,
                         "issuanceDate": "2019-05-01",
                         "expirationDate": "2029-05-01",
                         "documentNumber": "PA123456789",
@@ -1588,6 +1589,7 @@ paths:
                       {
                         "documentName": "Proof of Domicile - Anna Nowak",
                         "documentType": "Proof of domicile",
+                        "hasPhysicalFile": true,
                         "issuanceDate": "2023-11-01",
                         "expirationDate": "2024-11-01",
                         "documentNumber": "DOM987654321",
