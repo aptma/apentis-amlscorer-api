@@ -651,10 +651,14 @@ components:
           type: string
           enum: [approved, conditional, revoked]
           description: Indicates the internal decision regarding the acceptance of the business relation following the AML assessment.
-        accountStatus:  
+        accountStatus:
           type: string
           enum: [active, soft blocked, hard blocked]
           description: Shows the operational status of the client’s account based on AML findings and internal controls.
+        blockedReason:
+          type: string
+          enum: [account_opening_pending_approval, aml_escalation_suspicious, aml_review_pending, expired_kyc, fiu_regulatory_request, fraud, legal, missing_documents, tax_non_compliance]
+          description: Optional reason for account blocking; applicable only when accountStatus is soft blocked or hard blocked.
         nbrHits:
           type: integer
           format: int32
