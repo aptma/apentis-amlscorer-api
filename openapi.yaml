@@ -655,7 +655,7 @@ components:
           type: string
           enum: [active, soft blocked, hard blocked]
           description: Shows the operational status of the client’s account based on AML findings and internal controls.
-        blockedReason:
+        blockingReason:
           type: string
           enum: [account_opening_pending_approval, aml_escalation_suspicious, aml_review_pending, expired_kyc, fiu_regulatory_request, fraud, legal, missing_documents, tax_non_compliance]
           description: Optional reason for account blocking; applicable only when accountStatus is soft blocked or hard blocked.
