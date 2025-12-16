@@ -33,7 +33,7 @@ info:
     ### Example of using the token in a request
 
     ```bash
-    curl -X GET "https://api.apentis.com/business-relations" \
+    curl -X GET "https://www.rq-test.com/api/business-relations" \
          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     ```
 
@@ -45,7 +45,7 @@ info:
     url: https://www.apentis.com/contact
 
 servers:
-  - url: https://api.apentis.com
+  - url: https://www.riskquadrant.com/api
     description: API for Production environment
   - url: https://www.rq-test.com/api
     description: API for Test environment (for sandbox integration)    
