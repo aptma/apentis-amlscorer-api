@@ -191,6 +191,8 @@ components:
         - "power_of_attorney"
         - "Proof of domicile"
         - "Proof of origin of capital"
+        - "Proof of regulation"
+        - "Proof of supervision"
         - "PV board of directors"
         - "PV BoD"
         - "PV general assembly"
