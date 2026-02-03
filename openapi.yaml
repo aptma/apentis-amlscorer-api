@@ -190,6 +190,7 @@ components:
         - "Phone subscription"
         - "power_of_attorney"
         - "Proof of domicile"
+        - "Proof of listing"
         - "Proof of origin of capital"
         - "Proof of regulation"
         - "Proof of supervision"
