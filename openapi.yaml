@@ -46,7 +46,9 @@ info:
 
 servers:
   - url: https://www.riskquadrant.com/api
-    description: API for Production environment
+    description: API for Production environment - Luxembourg
+  - url: https://www.riskquadrant.ch/api
+    description: API for Production environment - Switzerland
   - url: https://www.rq-test.com/api
     description: API for Test environment (for sandbox integration)    
 
