@@ -1122,9 +1122,14 @@ components:
 
     PositionsCollectionResponse:
       type: object
-      required: [asOfDate, positions]
+      required: [startDate, positions]
       properties:
-        asOfDate: { type: string, format: date }
+        startDate: { type: string, format: date, description: Snapshot start date }
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          description: Snapshot end date; when null, positions are returned from startDate until now
         includedCustodians:
           type: array
           items: { type: string }
