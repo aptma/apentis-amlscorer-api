@@ -144,7 +144,7 @@ components:
         - "Bank statement"
         - "business_continuity_plan"
         - "Certificate of accommodation"
-        - "Certificate of good standing "
+        - "Certificate of good standing"
         - "certificate of incorporation"
         - "Certificate of incumbency"
         - "Certificate of insurance"
@@ -156,7 +156,7 @@ components:
         - "Copy of transaction notices"
         - "Corporate structure"
         - "Criminal record"
-        - "CRS sefl-certification"
+        - "CRS self-certification"
         - "DAC 6"
         - "death_certificate"
         - "declaration_of_BO"
@@ -1106,11 +1106,11 @@ components:
         priceDate: { type: string, format: date, nullable: true }
         price: { type: string, nullable: true, description: "Decimal as string; price in security currency" }
         marketValueSecurityCcy: { type: string, description: "Decimal as string; MV in security currency" }
-        marketValueOortfolioCcy: { type: string, description: "Decimal as string; MV in portfolio currency" }
+        marketValuePortfolioCcy: { type: string, description: "Decimal as string; MV in portfolio currency" }
         costPrice: { type: string, nullable: true }
         accruedInterest: { type: string, nullable: true }
         custodianId: { type: string, description: "Custodian code (custodian ID code provided by Apentis)" }
-        importationIime: { type: string, format: date-time, description: "UTC timestamp when imported into Apentis" }
+        importationTime: { type: string, format: date-time, description: "UTC timestamp when imported into Apentis" }
 
     CustodianExclusion:
       type: object
@@ -2406,7 +2406,7 @@ paths:
 
   /v1.1/cash-transactions/{externalTransactionId}/aml-result:
     get:
-      summary: Get AML cahsflow monitoring result for a cash transaction
+      summary: Get AML cashflow monitoring result for a cash transaction
       tags:
         - Cashflow monitoring
       parameters:
