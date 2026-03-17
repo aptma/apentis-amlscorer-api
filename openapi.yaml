@@ -307,6 +307,11 @@ components:
           enum: [active, terminated]
           default: active
           description: Status of the business relation.
+        amlFrequency:
+          type: string
+          enum: [ongoing, one-time]
+          default: ongoing
+          description: Frequency of AML checks (hits and adverse media) for the business relation. Defaults to `ongoing` when omitted.
         crmId:
           type: string
           format: uuid
@@ -454,6 +459,11 @@ components:
           enum: [active, terminated]
           default: active
           description: Status of the business relation.
+        amlFrequency:
+          type: string
+          enum: [ongoing, one-time]
+          default: ongoing
+          description: Frequency of AML checks (hits and adverse media) for the business relation. Defaults to `ongoing` when omitted.
         crmId:
           type: string
           format: uuid
@@ -1256,6 +1266,7 @@ paths:
                   email: anna.nowak@example.com
                   relationshipStatus: Client
                   relationStatus: active
+                  amlFrequency: ongoing
                   crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                   crmCode: CUST-PL-2024-0001
                 - type: Company
@@ -1280,6 +1291,7 @@ paths:
                   stateOwnedEntity: false
                   relationshipStatus: Prospect
                   relationStatus: terminated
+                  amlFrequency: one-time
                   crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
                   crmCode: CUST-LU-2023-0007
         '401':
@@ -1339,6 +1351,7 @@ paths:
               email: anna.nowak@example.com
               relationshipStatus: Client
               relationStatus: active
+              amlFrequency: ongoing
               crmCode: CUST-PL-2024-0001
       responses:
         '201':
@@ -1415,6 +1428,7 @@ paths:
             example:
               phoneNumber: "+352 456 789"
               email: claire.lefebvre@client.eu
+              amlFrequency: one-time
               originOfBusinessRelation: spontaneous_approach
               service:
                 - wealth_structuring
@@ -1522,6 +1536,7 @@ paths:
                 email: anna.nowak@example.com
                 relationshipStatus: Client
                 relationStatus: active
+                amlFrequency: ongoing
                 crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 crmCode: CUST-PL-2024-0001
         '401':
