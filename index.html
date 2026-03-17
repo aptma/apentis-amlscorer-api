@@ -73,12 +73,11 @@
 
   // Replace the Swagger logo with Apentis logo
   document.addEventListener("DOMContentLoaded", function() {
-    var startYear = 2025;
     var currentYear = new Date().getFullYear();
     var copyrightYear = document.getElementById("copyright-year");
 
     if (copyrightYear) {
-      copyrightYear.textContent = currentYear > startYear ? startYear + "-" + currentYear : String(startYear);
+      copyrightYear.textContent = String(currentYear);
     }
 
     var topbar = document.querySelector('.swagger-ui .topbar');
