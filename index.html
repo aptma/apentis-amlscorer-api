@@ -51,7 +51,7 @@
   <div id="swagger-ui"></div>
 
   <footer>
-    &copy; 2025 Apentis | Innovate. Monitor. Comply.
+    &copy; <span id="copyright-year"></span> Apentis | Innovate. Monitor. Comply.
   </footer>
 
   <script src="swagger-ui-bundle.js" charset="UTF-8"> </script>
@@ -73,6 +73,14 @@
 
   // Replace the Swagger logo with Apentis logo
   document.addEventListener("DOMContentLoaded", function() {
+    var startYear = 2025;
+    var currentYear = new Date().getFullYear();
+    var copyrightYear = document.getElementById("copyright-year");
+
+    if (copyrightYear) {
+      copyrightYear.textContent = currentYear > startYear ? startYear + "-" + currentYear : String(startYear);
+    }
+
     var topbar = document.querySelector('.swagger-ui .topbar');
     if (topbar) {
       topbar.innerHTML = `
