@@ -1214,8 +1214,8 @@ paths:
     get:
       summary: Retrieve business relations
       description: >-
-        Returns the list of business relations. By default, terminated business relations
-        are excluded unless `includeTerminated` is set to `true`.
+        Returns business relations using cursor pagination.
+        By default, terminated business relations are excluded unless `includeTerminated` is set to `true`.
       tags:
         - Business relations
       security:
@@ -1228,72 +1228,107 @@ paths:
             default: false
           description: >-
             When set to `true`, the response will also contain business relations with a terminated status.
+        - in: query
+          name: pageSize
+          required: false
+          description: Number of business relations to return per page (default 1000, max 5000)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 5000
+            default: 1000
+        - in: query
+          name: cursor
+          required: false
+          description: Opaque pagination cursor returned by the previous page
+          schema:
+            type: string
       responses:
         '200':
           description: Business relations retrieved successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BusinessRelation'
+                type: object
+                required:
+                  - businessRelations
+                properties:
+                  businessRelations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessRelation'
+                  nextCursor:
+                    type: string
+                    nullable: true
+                    description: Opaque cursor for fetching the next page; omitted or null when no more records are available
               example:
-                - type: Person
-                  name: Anna Nowak
-                  firstName: Anna
-                  lastName: Nowak
-                  nationality: PL
-                  fiscalCountry: PL
-                  address: 12A Nowy Swiat
-                  postalCode: 80-145
-                  city: Warsaw
-                  countryOfResidence: PL
-                  language: EN
-                  birthDate: 1985-09-12
-                  placeOfBirth: Krakow
-                  maritalStatus: Married
-                  taxIdentificationNumber: PL1234567890
-                  wealthSource:
-                    - salaries_remuneration
-                  bankAccountCountry: PL
-                  originOfBusinessRelation: relation_with_existing_client
-                  crsStatus: crs_compliant
-                  service:
-                    - wealth_structuring
-                  branch:
-                    - Apentis LU
-                  phoneNumber: "+48 123 456 789"
-                  email: anna.nowak@example.com
-                  relationshipStatus: Client
-                  relationStatus: active
-                  amlFrequency: ongoing
-                  crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                  crmCode: CUST-PL-2024-0001
-                - type: Company
-                  name: Example Holdings SA
-                  registrationNumber: LU12345678
-                  countryOfResidence: LU
-                  countryOfOperation: LU
-                  wealthSource:
-                    - accumulated_profit
-                    - company_sale_ma_exit
-                  bankAccountCountry: LU
-                  originOfBusinessRelation: business_intermediary
-                  crsStatus: crs_compliant
-                  service:
-                    - portfolio_management_discretionary
-                  industrySector: k_financial_and_insurance_activities
-                  complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
-                  branch:
-                    - Apentis FR
-                  listedCompany: true
-                  regulatedEntity: true
-                  stateOwnedEntity: false
-                  relationshipStatus: Prospect
-                  relationStatus: terminated
-                  amlFrequency: one-time
-                  crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
-                  crmCode: CUST-LU-2023-0007
+                businessRelations:
+                  - type: Person
+                    name: Anna Nowak
+                    firstName: Anna
+                    lastName: Nowak
+                    nationality: PL
+                    fiscalCountry: PL
+                    address: 12A Nowy Swiat
+                    postalCode: 80-145
+                    city: Warsaw
+                    countryOfResidence: PL
+                    language: EN
+                    birthDate: 1985-09-12
+                    placeOfBirth: Krakow
+                    maritalStatus: Married
+                    taxIdentificationNumber: PL1234567890
+                    wealthSource:
+                      - salaries_remuneration
+                    bankAccountCountry: PL
+                    originOfBusinessRelation: relation_with_existing_client
+                    crsStatus: crs_compliant
+                    service:
+                      - wealth_structuring
+                    branch:
+                      - Apentis LU
+                    phoneNumber: "+48 123 456 789"
+                    email: anna.nowak@example.com
+                    relationshipStatus: Client
+                    relationStatus: active
+                    amlFrequency: ongoing
+                    crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    crmCode: CUST-PL-2024-0001
+                  - type: Company
+                    name: Example Holdings SA
+                    registrationNumber: LU12345678
+                    countryOfResidence: LU
+                    countryOfOperation: LU
+                    wealthSource:
+                      - accumulated_profit
+                      - company_sale_ma_exit
+                    bankAccountCountry: LU
+                    originOfBusinessRelation: business_intermediary
+                    crsStatus: crs_compliant
+                    service:
+                      - portfolio_management_discretionary
+                    industrySector: k_financial_and_insurance_activities
+                    complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
+                    branch:
+                      - Apentis FR
+                    listedCompany: true
+                    regulatedEntity: true
+                    stateOwnedEntity: false
+                    relationshipStatus: Prospect
+                    relationStatus: terminated
+                    amlFrequency: one-time
+                    crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
+                    crmCode: CUST-LU-2023-0007
+                nextCursor: "eyJsYXN0SWQiOiIxMDAwIiwibWFya2VyIjoiY3VzdG9tZXItaGFzaCJ9"
+        '400':
+          description: Bad request (invalid cursor)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "BAD_REQUEST_INVALID_CURSOR"
+                code: 400
         '401':
           description: Unauthorized - Missing or invalid token
           content:
@@ -1303,6 +1338,15 @@ paths:
               example:
                 error: "Unauthorized - Missing or invalid token"
                 code: 401
+        '422':
+          description: Unprocessable entity (invalid parameters)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unprocessable entity (invalid parameters)"
+                code: 422
         '500':
           description: Internal Server Error
           content:
