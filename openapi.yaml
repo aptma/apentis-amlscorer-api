@@ -2038,6 +2038,72 @@ paths:
                 code: 500
 
   /v1.1/business-relations/{crmCode}/links:
+    get:
+      summary: Retrieve business relation links
+      tags:
+        - Business relations links
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: The CRM code of the primary business relation.
+      responses:
+        '200':
+          description: Links retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  links:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessRelationLink'
+                example:
+                  status: success
+                  links:
+                    - linkedCrmCode: MZ001
+                      role: Director
+                    - linkedCrmCode: SH002
+                      role: Shareholder
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '404':
+          description: Business relation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
+
     post:
       summary: Link multiple business relations to a primary one
       tags:
@@ -2113,6 +2179,11 @@ paths:
 
     delete:
       summary: Delete business relation links
+      description: >
+        Deletes links for a given primary business relation. If the request body contains one
+        or more objects with `linkedCrmCode` and `role`, only those specific links are deleted.
+        If the request body is empty, or if no `linkedCrmCode` is provided, all links for the
+        specified primary business relation are deleted.
       tags:
         - Business relations links
       security:
@@ -2125,16 +2196,22 @@ paths:
             type: string
           description: The CRM code of the primary business relation.
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/BusinessRelationLinkDeleteRequest'
-            example:
-              - linkedCrmCode: MZ001
-                role: Director
-              - linkedCrmCode: SH002
-                role: Shareholder
+            examples:
+              deleteSpecificLinks:
+                summary: Delete specific links
+                value:
+                  - linkedCrmCode: MZ001
+                    role: Director
+                  - linkedCrmCode: SH002
+                    role: Shareholder
+              deleteAllLinks:
+                summary: Delete all links
+                value: []
       responses:
         '200':
           description: Links deleted successfully
@@ -2157,6 +2234,13 @@ paths:
                         role:
                           type: string
                           example: Director
+                example:
+                  status: success
+                  deletedLinks:
+                    - linkedCrmCode: MZ001
+                      role: Director
+                    - linkedCrmCode: SH002
+                      role: Shareholder
         '400':
           description: Invalid input
           content:
