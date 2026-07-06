@@ -214,7 +214,7 @@ components:
         - "Tax notice"
         - "Tax registration number"
         - "termination_letter"
-        - "Trade / Economic license"
+        - "trade_license"
         - "Transaction record"
         - "Tripartite agreement"
         - "Unique Identification Number"
