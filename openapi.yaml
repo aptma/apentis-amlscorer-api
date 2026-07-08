@@ -343,27 +343,11 @@ components:
           description: Tax identification number of the business relation.
         wealthSource:
           type: array
-          description: Sources of wealth of the business relation.
+          description: >
+            Sources of wealth of the business relation. Default values provided by Apentis include: entrepreneurial_activity, salaries_remuneration, inheritance, real_estate, financial_investments, donation_gifts_from_family, donation_gifts_from_others, divorce, loan_leverage, accumulated_profit, capital_from_shareholders, crypto_assets, company_sale_ma_exit,insurance_payout, pension_retirement_fund,litigation_compensation, lottery_gambling. However, each client can configure its own list of acceptable values. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
           items:
             type: string
-            enum:
-              - entrepreneurial_activity
-              - salaries_remuneration
-              - inheritance
-              - real_estate
-              - financial_investments
-              - donation_gifts_from_family
-              - donation_gifts_from_others
-              - divorce
-              - loan_leverage
-              - accumulated_profit
-              - capital_from_shareholders
-              - crypto_assets
-              - company_sale_ma_exit
-              - insurance_payout
-              - pension_retirement_fund
-              - litigation_compensation
-              - lottery_gambling
         bankAccountCountry:
           type: string
           maxLength: 2
@@ -508,27 +492,11 @@ components:
           description: Legal form of the entity. Applicable for legal entities only.
         wealthSource:
           type: array
-          description: Sources of wealth of the business relation.
+          description: >
+            Sources of wealth of the business relation. Default values provided by Apentis include: entrepreneurial_activity, salaries_remuneration, inheritance, real_estate, financial_investments, donation_gifts_from_family, donation_gifts_from_others, divorce, loan_leverage, accumulated_profit, capital_from_shareholders, crypto_assets, company_sale_ma_exit,insurance_payout, pension_retirement_fund,litigation_compensation, lottery_gambling. However, each client can configure its own list of acceptable values. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
           items:
             type: string
-            enum:
-              - entrepreneurial_activity
-              - salaries_remuneration
-              - inheritance
-              - real_estate
-              - financial_investments
-              - donation_gifts_from_family
-              - donation_gifts_from_others
-              - divorce
-              - loan_leverage
-              - accumulated_profit
-              - capital_from_shareholders
-              - crypto_assets
-              - company_sale_ma_exit
-              - insurance_payout
-              - pension_retirement_fund
-              - litigation_compensation
-              - lottery_gambling
         bankAccountCountry:
           type: string
           maxLength: 2
@@ -1173,7 +1141,7 @@ paths:
       description: |
         Returns only the fields in the BusinessRelation object for which the list of allowed values is customized per client.
         
-        These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, etc.).
+        These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, wealth sources, etc.).
 
         Standard fields with fixed values — such as gender, maritalStatus, or countryOfBirth — are not included in this response, 
         as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
