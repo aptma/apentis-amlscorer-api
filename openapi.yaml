@@ -302,6 +302,10 @@ components:
           enum: [Client, Prospect, Contact, Investment]
           default: Client
           description: Business relation type.
+        relationClassification:
+          type: string
+          description: Optional customer specific relation classification field. Enabled on request. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         relationStatus:
           type: string
           enum: [active, terminated]
@@ -443,6 +447,10 @@ components:
           enum: [Client, Prospect, Contact, Investment]
           default: Client
           description: Business relation type.
+        relationClassification:
+          type: string
+          description: Optional customer specific relation classification field. Enabled on request. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
         relationStatus:
           type: string
           enum: [active, terminated]
