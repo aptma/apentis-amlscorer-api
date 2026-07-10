@@ -361,6 +361,9 @@ components:
           type: string
           maxLength: 2
           description: ISO 2-letter country code of the bank account.
+        portfolioOverOneMillion:
+          type: boolean
+          description: Optional indicator of whether the business relation's portfolio is over one million.
         originOfBusinessRelation:
           type: string
           enum:
@@ -514,6 +517,9 @@ components:
           type: string
           maxLength: 2
           description: ISO 2-letter country code of the bank account.
+        portfolioOverOneMillion:
+          type: boolean
+          description: Optional indicator of whether the business relation's portfolio is over one million.
         originOfBusinessRelation:
           type: string
           enum:
@@ -1262,6 +1268,7 @@ paths:
                     wealthSource:
                       - salaries_remuneration
                     bankAccountCountry: PL
+                    portfolioOverOneMillion: false
                     originOfBusinessRelation: relation_with_existing_client
                     crsStatus: crs_compliant
                     service:
@@ -1284,6 +1291,7 @@ paths:
                       - accumulated_profit
                       - company_sale_ma_exit
                     bankAccountCountry: LU
+                    portfolioOverOneMillion: true
                     originOfBusinessRelation: business_intermediary
                     crsStatus: crs_compliant
                     service:
@@ -1366,6 +1374,7 @@ paths:
                 - salaries_remuneration
                 - financial_investments
               bankAccountCountry: PL
+              portfolioOverOneMillion: false
               originOfBusinessRelation: prospection
               crsStatus: crs_compliant
               service:
@@ -1551,6 +1560,7 @@ paths:
                   - salaries_remuneration
                   - real_estate
                 bankAccountCountry: PL
+                portfolioOverOneMillion: true
                 originOfBusinessRelation: relation_with_existing_client
                 crsStatus: crs_compliant
                 service:
