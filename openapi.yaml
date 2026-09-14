@@ -110,7 +110,13 @@ components:
           type: array
           description: Allowed values configured for the client.
           items:
-            type: string
+            type: object
+            required: [id, name]
+            properties:
+              id:
+                type: string
+              name:
+                type: string
         isRequired:
           type: boolean
           description: Indicates if the field is mandatory for the client.
@@ -225,6 +231,46 @@ components:
         - "W-8BEN"
         - "W-9"
 
+    BusinessRelationRelationshipManager:
+      type: string
+      nullable: true
+      minLength: 1
+      pattern: '\S'
+      description: |
+        User ID of the assigned relationship manager, available for persons and companies.
+        GET omits this field when unassigned and returns an existing inactive manager ID when assigned.
+        New assignments must identify an active user belonging to the authenticated customer.
+        Apentis users, technical users, administrators and superadministrators cannot receive new assignments;
+        other job categories are not excluded by this API contract. Selectable users are listed in schema-config.
+        POST omission or null leaves the manager unassigned. PUT omission preserves the assignment;
+        null clears it. PUT may retain the current inactive manager by sending the same ID, but cannot
+        assign a different inactive manager. Customer ownership is required even when retaining an ID.
+        Blank IDs are invalid. Deactivation does not clear an existing assignment.
+      example: user-active
+
+    BusinessRelationClientGroups:
+      type: array
+      nullable: true
+      items:
+        type: string
+        minLength: 1
+        pattern: '\S'
+      description: |
+        Client-group membership IDs, available for persons and companies when the customer's client-group
+        feature is enabled. GET returns all current memberships, including retained inactive groups, or []
+        when there are none. When the feature is disabled, GET and schema-config omit clientGroups;
+        any explicitly supplied clientGroups value, including null or [], is rejected with HTTP 400.
+        Disabling the feature does not delete memberships; omission leaves them unchanged.
+        POST omission, null or [] creates no memberships. A nonempty array assigns the supplied groups.
+        PUT omission preserves memberships; null or [] clears them; an array replaces the complete set.
+        Duplicate IDs are deduplicated and array order has no assignment meaning. Null or blank entries
+        are invalid. Every ID must exist and belong to the authenticated customer. New memberships must
+        reference active groups; PUT may retain already-assigned inactive groups in its replacement set.
+        Once an inactive membership is removed, it cannot be re-added until the group becomes active.
+        Historical means retained inactive records and current memberships, not deleted records,
+        removed memberships or previous names. Deactivation does not clear memberships.
+      example: [group-active]
+
     BusinessRelation:
       type: object
       discriminator:
@@ -302,6 +348,10 @@ components:
           enum: [Client, Prospect, Contact, Investment]
           default: Client
           description: Business relation type.
+        relationshipManager:
+          $ref: '#/components/schemas/BusinessRelationRelationshipManager'
+        clientGroups:
+          $ref: '#/components/schemas/BusinessRelationClientGroups'
         relationClassification:
           type: string
           description: Optional customer specific relation classification field. Enabled on request. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
@@ -450,6 +500,10 @@ components:
           enum: [Client, Prospect, Contact, Investment]
           default: Client
           description: Business relation type.
+        relationshipManager:
+          $ref: '#/components/schemas/BusinessRelationRelationshipManager'
+        clientGroups:
+          $ref: '#/components/schemas/BusinessRelationClientGroups'
         relationClassification:
           type: string
           description: Optional customer specific relation classification field. Enabled on request. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
@@ -1166,6 +1220,16 @@ paths:
         as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
 
         This endpoint allows API consumers to dynamically retrieve the client-specific value lists for fields that support custom configuration.
+
+        relationshipManager lists active users of the authenticated customer, excluding Apentis users,
+        technical users, administrators and superadministrators. No other job categories are excluded.
+        clientGroups is included only when the customer's client-group feature is enabled and lists
+        active groups of that customer. An enabled field with no selectable values has values: [].
+        Both fields are optional; relationshipManager is single-select and clientGroups is multi-select.
+
+        These lists describe values available for new assignments, not a complete dictionary of IDs
+        returned by business-relation GET. Existing inactive manager and group assignments remain
+        visible in individual, unpaginated and paginated GET responses even when absent here.
       tags:
         - Business relations
       security:
@@ -1177,32 +1241,89 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TenantBusinessRelationSchemaResponse'
-              example:
-                fields:
-                  service:
-                    type: string
-                    values:
-                      - private_equity
-                      - banking_finance_and_securitisation
-                      - real_estate_and_construction
-                      - company_law_mergers_acquisitions
-                    isRequired: false
-                    multiSelect: true
-                  branch:
-                    type: string
-                    values:
-                      - Apple US
-                      - Apple FR
-                      - Apple CH
-                    isRequired: false
-                    multiSelect: true
+              examples:
+                clientGroupsEnabled:
+                  summary: Selectable active values for a customer with client groups enabled
+                  value:
+                    fields:
+                      service:
+                        type: string
+                        values:
+                          - id: private_equity
+                            name: Private equity
+                          - id: banking_finance_and_securitisation
+                            name: Banking, finance and securitisation
+                          - id: real_estate_and_construction
+                            name: Real estate and construction
+                          - id: company_law_mergers_acquisitions
+                            name: Company law, mergers and acquisitions
+                        isRequired: false
+                        multiSelect: true
+                      branch:
+                        type: string
+                        values:
+                          - id: branch-us
+                            name: Apple US
+                          - id: branch-fr
+                            name: Apple FR
+                          - id: branch-ch
+                            name: Apple CH
+                        isRequired: false
+                        multiSelect: true
+                      relationshipManager:
+                        type: string
+                        values:
+                          - id: user-active
+                            name: Example manager
+                        isRequired: false
+                        multiSelect: false
+                      clientGroups:
+                        type: string
+                        values:
+                          - id: group-active
+                            name: Active group
+                          - id: group-new-active
+                            name: Another active group
+                        isRequired: false
+                        multiSelect: true
+                noActiveValues:
+                  summary: Assignment-field excerpt with no active choices; client groups enabled
+                  value:
+                    fields:
+                      relationshipManager:
+                        type: string
+                        values: []
+                        isRequired: false
+                        multiSelect: false
+                      clientGroups:
+                        type: string
+                        values: []
+                        isRequired: false
+                        multiSelect: true
+                clientGroupsDisabled:
+                  summary: Assignment-field excerpt with clientGroups omitted because the feature is disabled
+                  value:
+                    fields:
+                      relationshipManager:
+                        type: string
+                        values:
+                          - id: user-active
+                            name: Example manager
+                        isRequired: false
+                        multiSelect: false
 
   /v1.1/business-relations:
     get:
       summary: Retrieve business relations
       description: >-
-        Returns business relations using cursor pagination.
+        Returns a bare array when both pageSize and cursor are omitted, or a businessRelations
+        envelope when cursor pagination is requested.
         By default, terminated business relations are excluded unless `includeTerminated` is set to `true`.
+        Both list modes use the same assignment fields as individual GET: relationshipManager is omitted
+        when unassigned; enabled clientGroups returns all current IDs, including inactive assignments,
+        or [] when empty. Disabled clientGroups is omitted. Schema-config contains only selectable active
+        values and may not contain historical IDs returned here. Reading does not change assignments,
+        reactivate records or trigger computation.
       tags:
         - Business relations
       security:
@@ -1236,79 +1357,104 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - businessRelations
-                properties:
-                  businessRelations:
-                    type: array
+                oneOf:
+                  - type: array
                     items:
                       $ref: '#/components/schemas/BusinessRelation'
-                  nextCursor:
-                    type: string
-                    nullable: true
-                    description: Opaque cursor for fetching the next page; omitted or null when no more records are available
-              example:
-                businessRelations:
-                  - type: Person
-                    name: Anna Nowak
-                    firstName: Anna
-                    lastName: Nowak
-                    nationality: PL
-                    fiscalCountry: PL
-                    address: 12A Nowy Swiat
-                    postalCode: 80-145
-                    city: Warsaw
-                    countryOfResidence: PL
-                    language: EN
-                    birthDate: 1985-09-12
-                    placeOfBirth: Krakow
-                    maritalStatus: Married
-                    taxIdentificationNumber: PL1234567890
-                    wealthSource:
-                      - salaries_remuneration
-                    bankAccountCountry: PL
-                    portfolioOverOneMillion: false
-                    originOfBusinessRelation: relation_with_existing_client
-                    crsStatus: crs_compliant
-                    service:
-                      - wealth_structuring
-                    branch:
-                      - Apentis LU
-                    phoneNumber: "+48 123 456 789"
-                    email: anna.nowak@example.com
-                    relationshipStatus: Client
-                    relationStatus: active
-                    amlFrequency: ongoing
-                    crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                    crmCode: CUST-PL-2024-0001
-                  - type: Company
-                    name: Example Holdings SA
-                    registrationNumber: LU12345678
-                    countryOfResidence: LU
-                    countryOfOperation: LU
-                    wealthSource:
-                      - accumulated_profit
-                      - company_sale_ma_exit
-                    bankAccountCountry: LU
-                    portfolioOverOneMillion: true
-                    originOfBusinessRelation: business_intermediary
-                    crsStatus: crs_compliant
-                    service:
-                      - portfolio_management_discretionary
-                    industrySector: k_financial_and_insurance_activities
-                    complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
-                    branch:
-                      - Apentis FR
-                    listedCompany: true
-                    regulatedEntity: true
-                    stateOwnedEntity: false
-                    relationshipStatus: Prospect
-                    relationStatus: terminated
-                    amlFrequency: one-time
-                    crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
-                    crmCode: CUST-LU-2023-0007
-                nextCursor: "eyJsYXN0SWQiOiIxMDAwIiwibWFya2VyIjoiY3VzdG9tZXItaGFzaCJ9"
+                  - type: object
+                    required:
+                      - businessRelations
+                    properties:
+                      businessRelations:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/BusinessRelation'
+                      nextCursor:
+                        type: string
+                        nullable: true
+                        description: Opaque cursor for fetching the next page; omitted or null when no more records are available
+              examples:
+                paginatedAssignments:
+                  summary: Paginated response retains inactive assignments; empty enabled memberships use []
+                  value:
+                    businessRelations:
+                      - type: Person
+                        relationshipManager: user-inactive
+                        clientGroups: [group-active, group-inactive]
+                        name: Anna Nowak
+                        firstName: Anna
+                        lastName: Nowak
+                        nationality: PL
+                        fiscalCountry: PL
+                        address: 12A Nowy Swiat
+                        postalCode: 80-145
+                        city: Warsaw
+                        countryOfResidence: PL
+                        language: EN
+                        birthDate: 1985-09-12
+                        placeOfBirth: Krakow
+                        maritalStatus: Married
+                        taxIdentificationNumber: PL1234567890
+                        wealthSource:
+                          - salaries_remuneration
+                        bankAccountCountry: PL
+                        portfolioOverOneMillion: false
+                        originOfBusinessRelation: relation_with_existing_client
+                        crsStatus: crs_compliant
+                        service:
+                          - wealth_structuring
+                        branch:
+                          - Apentis LU
+                        phoneNumber: "+48 123 456 789"
+                        email: anna.nowak@example.com
+                        relationshipStatus: Client
+                        relationStatus: active
+                        amlFrequency: ongoing
+                        crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        crmCode: CUST-PL-2024-0001
+                      - type: Company
+                        relationshipManager: user-active
+                        clientGroups: []
+                        name: Example Holdings SA
+                        registrationNumber: LU12345678
+                        countryOfResidence: LU
+                        countryOfOperation: LU
+                        wealthSource:
+                          - accumulated_profit
+                          - company_sale_ma_exit
+                        bankAccountCountry: LU
+                        portfolioOverOneMillion: true
+                        originOfBusinessRelation: business_intermediary
+                        crsStatus: crs_compliant
+                        service:
+                          - portfolio_management_discretionary
+                        industrySector: k_financial_and_insurance_activities
+                        complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
+                        branch:
+                          - Apentis FR
+                        listedCompany: true
+                        regulatedEntity: true
+                        stateOwnedEntity: false
+                        relationshipStatus: Prospect
+                        relationStatus: terminated
+                        amlFrequency: one-time
+                        crmId: 4bbf2f64-5717-4562-b3fc-2c963f66bfaa
+                        crmCode: CUST-LU-2023-0007
+                    nextCursor: "eyJsYXN0SWQiOiIxMDAwIiwibWFya2VyIjoiY3VzdG9tZXItaGFzaCJ9"
+                unpaginatedAssignments:
+                  summary: Bare array when pageSize and cursor are omitted
+                  value:
+                    - type: Person
+                      crmCode: EXAMPLE-PERSON
+                      firstName: Example
+                      lastName: Person
+                      relationshipManager: user-inactive
+                      clientGroups: [group-active, group-inactive]
+                    - type: Company
+                      crmCode: EXAMPLE-COMPANY
+                      name: Example Company
+                      relationshipManager: user-active
+                      clientGroups: []
         '400':
           description: Bad request (invalid cursor)
           content:
@@ -1347,6 +1493,16 @@ paths:
                 code: 500
     post:
       summary: Create a new business relation
+      description: |
+        For persons and companies, relationshipManager assigns a customer-owned active eligible user
+        and clientGroups assigns a set of customer-owned active groups. Selectable IDs and names come
+        from schema-config. Apentis users, technical users, administrators and superadministrators
+        cannot be newly assigned as managers. Inactive managers and groups cannot be assigned on POST.
+        Omitted or null relationshipManager leaves it unassigned. Omitted, null or [] clientGroups
+        creates no memberships. Repeated group IDs are deduplicated; blank manager IDs and null or blank
+        group-array entries are invalid. When client groups are disabled, explicitly supplying
+        clientGroups, including null or [], is invalid. Validation failures return HTTP 400 without
+        partially persisting scalar values or memberships. The response remains {crmCode, status}.
       tags:
         - Business relations
       security:
@@ -1357,36 +1513,58 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BusinessRelation'
-            example:
-              type: Person
-              name: Anna Nowak
-              firstName: Anna
-              lastName: Nowak
-              nationality: PL
-              fiscalCountry: PL
-              address: 12A Nowy Swiat
-              postalCode: 80-145
-              city: Warsaw
-              countryOfResidence: PL
-              language: EN
-              birthDate: 1985-09-12
-              wealthSource:
-                - salaries_remuneration
-                - financial_investments
-              bankAccountCountry: PL
-              portfolioOverOneMillion: false
-              originOfBusinessRelation: prospection
-              crsStatus: crs_compliant
-              service:
-                - philanthropy_advisory
-              branch:
-                - Apentis LU
-              phoneNumber: '+48 123 456 789'
-              email: anna.nowak@example.com
-              relationshipStatus: Client
-              relationStatus: active
-              amlFrequency: ongoing
-              crmCode: CUST-PL-2024-0001
+            examples:
+              personAssignments:
+                summary: Create a person with active assignments
+                value:
+                  type: Person
+                  relationshipManager: user-active
+                  clientGroups: [group-active]
+                  name: Anna Nowak
+                  firstName: Anna
+                  lastName: Nowak
+                  nationality: PL
+                  fiscalCountry: PL
+                  address: 12A Nowy Swiat
+                  postalCode: 80-145
+                  city: Warsaw
+                  countryOfResidence: PL
+                  language: EN
+                  birthDate: 1985-09-12
+                  wealthSource:
+                    - salaries_remuneration
+                    - financial_investments
+                  bankAccountCountry: PL
+                  portfolioOverOneMillion: false
+                  originOfBusinessRelation: prospection
+                  crsStatus: crs_compliant
+                  service:
+                    - philanthropy_advisory
+                  branch:
+                    - Apentis LU
+                  phoneNumber: '+48 123 456 789'
+                  email: anna.nowak@example.com
+                  relationshipStatus: Client
+                  relationStatus: active
+                  amlFrequency: ongoing
+                  crmCode: CUST-PL-2024-0001
+              companyAssignments:
+                summary: Create a company with active assignments
+                value:
+                  type: Company
+                  crmCode: EXAMPLE-COMPANY
+                  name: Example Company
+                  relationshipManager: user-active
+                  clientGroups: [group-active]
+              unassigned:
+                summary: Explicit null values create no assignments when client groups are enabled
+                value:
+                  type: Person
+                  crmCode: EXAMPLE-UNASSIGNED
+                  firstName: Example
+                  lastName: Person
+                  relationshipManager: null
+                  clientGroups: null
       responses:
         '201':
           description: Business relation created successfully
@@ -1442,6 +1620,30 @@ paths:
   /v1.1/business-relations/{crmCode}:
     put:
       summary: Update an existing business relation
+      description: |
+        Applies assignment changes to persons and companies. Omitting relationshipManager or
+        clientGroups preserves the corresponding existing assignments, including inactive assignments.
+        relationshipManager: null clears the manager. clientGroups: null or [] clears memberships;
+        a nonempty array replaces the complete membership set. Duplicate IDs are deduplicated.
+        Reordering an equal set or supplying the same manager does not change the assignment.
+
+        New assignments require existing customer-owned active eligible users or active groups.
+        Apentis users, technical users, administrators and superadministrators cannot receive new
+        manager assignments. PUT may retain the current inactive manager ID and already-assigned
+        inactive group IDs. This exception never permits foreign-customer IDs. Schema-config contains
+        only selectable active values, so a retained inactive ID can be valid here without appearing there.
+
+        For example, if current groups are [group-active, group-inactive], replacing them with
+        [group-active, group-inactive, group-new-active] succeeds when group-new-active is active.
+        Adding a different inactive group fails. Replacing the set with [group-active] removes
+        group-inactive; a later request cannot re-add it while it remains inactive. Changing an inactive
+        manager to a different inactive manager is rejected. Historical assignments refer only to
+        retained records and current memberships, not deleted records or removed memberships.
+
+        Blank manager IDs and null or blank group-array entries are invalid. When client groups are
+        disabled, any explicitly supplied clientGroups value (including null or []) is rejected;
+        omission preserves stored memberships. Invalid requests return HTTP 400 without partially
+        saving scalar values or memberships. The response remains {crmCode, status}.
       tags:
         - Business relations
       security:
@@ -1459,15 +1661,46 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BusinessRelation'
-            example:
-              phoneNumber: "+352 456 789"
-              email: claire.lefebvre@client.eu
-              amlFrequency: one-time
-              originOfBusinessRelation: spontaneous_approach
-              service:
-                - wealth_structuring
-              branch:
-                - Apentis FR
+            examples:
+              updateDetails:
+                summary: Omitted assignment fields preserve the current manager and memberships
+                value:
+                  phoneNumber: "+352 456 789"
+                  email: claire.lefebvre@client.eu
+                  amlFrequency: one-time
+                  originOfBusinessRelation: spontaneous_approach
+                  service:
+                    - wealth_structuring
+                  branch:
+                    - Apentis FR
+              assignActiveReferences:
+                summary: Replace assignments with selectable active values
+                value:
+                  relationshipManager: user-active
+                  clientGroups: [group-active, group-new-active]
+              retainInactiveAssignments:
+                summary: Retain the current inactive manager and group while adding an active group
+                description: The current manager is user-inactive and current groups are group-active and group-inactive.
+                value:
+                  relationshipManager: user-inactive
+                  clientGroups: [group-active, group-inactive, group-new-active]
+              removeInactiveGroup:
+                summary: Remove the inactive group; it cannot be re-added while inactive
+                value:
+                  clientGroups: [group-active]
+              clearAssignments:
+                summary: Clear both assignments when client groups are enabled
+                value:
+                  relationshipManager: null
+                  clientGroups: []
+              clearGroupsWithNull:
+                summary: Null also clears memberships when enabled; omitted manager remains unchanged
+                value:
+                  clientGroups: null
+              deduplicateGroups:
+                summary: Repeated IDs are accepted and stored as a set
+                value:
+                  clientGroups: [group-active, group-active]
       responses:
         '200':
           description: Business relation updated successfully
@@ -1522,6 +1755,14 @@ paths:
 
     get:
       summary: Retrieve a business relation by crmCode
+      description: |
+        Returns the current assignments for a person or company. An unassigned relationshipManager
+        is omitted. Existing inactive manager IDs remain visible. With client groups enabled,
+        clientGroups contains all current membership IDs, including retained inactive groups,
+        or [] when no memberships exist. When disabled, clientGroups is omitted and stored memberships
+        remain unchanged. Schema-config lists only active selectable values and is not a complete
+        dictionary of historical IDs returned here. GET does not reconstruct deleted records,
+        removed memberships or previous names, change assignments, reactivate records or trigger computation.
       tags:
         - Business relations
       security:
@@ -1540,40 +1781,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BusinessRelation'
-              example:
-                type: Person
-                name: Anna Nowak
-                firstName: Anna
-                lastName: Nowak
-                nationality: PL
-                fiscalCountry: PL
-                address: 12A Nowy Swiat
-                postalCode: 80-145
-                city: Warsaw
-                countryOfResidence: PL
-                language: EN
-                birthDate: 1985-09-12
-                placeOfBirth: Krakow
-                maritalStatus: Married
-                taxIdentificationNumber: PL1234567890
-                wealthSource:
-                  - salaries_remuneration
-                  - real_estate
-                bankAccountCountry: PL
-                portfolioOverOneMillion: true
-                originOfBusinessRelation: relation_with_existing_client
-                crsStatus: crs_compliant
-                service:
-                  - wealth_structuring
-                branch:
-                  - Apentis LU
-                phoneNumber: "+48 123 456 789"
-                email: anna.nowak@example.com
-                relationshipStatus: Client
-                relationStatus: active
-                amlFrequency: ongoing
-                crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                crmCode: CUST-PL-2024-0001
+              examples:
+                historicalAssignments:
+                  summary: Current inactive assignments remain visible although absent from selectable schema values
+                  value:
+                    type: Person
+                    relationshipManager: user-inactive
+                    clientGroups: [group-active, group-inactive]
+                    name: Anna Nowak
+                    firstName: Anna
+                    lastName: Nowak
+                    nationality: PL
+                    fiscalCountry: PL
+                    address: 12A Nowy Swiat
+                    postalCode: 80-145
+                    city: Warsaw
+                    countryOfResidence: PL
+                    language: EN
+                    birthDate: 1985-09-12
+                    placeOfBirth: Krakow
+                    maritalStatus: Married
+                    taxIdentificationNumber: PL1234567890
+                    wealthSource:
+                      - salaries_remuneration
+                      - real_estate
+                    bankAccountCountry: PL
+                    portfolioOverOneMillion: true
+                    originOfBusinessRelation: relation_with_existing_client
+                    crsStatus: crs_compliant
+                    service:
+                      - wealth_structuring
+                    branch:
+                      - Apentis LU
+                    phoneNumber: "+48 123 456 789"
+                    email: anna.nowak@example.com
+                    relationshipStatus: Client
+                    relationStatus: active
+                    amlFrequency: ongoing
+                    crmId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    crmCode: CUST-PL-2024-0001
+                unassigned:
+                  summary: Unassigned manager omitted and enabled empty client groups returned as []
+                  value:
+                    type: Person
+                    crmCode: EXAMPLE-UNASSIGNED
+                    firstName: Example
+                    lastName: Person
+                    clientGroups: []
+                clientGroupsDisabled:
+                  summary: Company with clientGroups omitted because the feature is disabled
+                  value:
+                    type: Company
+                    crmCode: EXAMPLE-DISABLED
+                    name: Example Company
+                    relationshipManager: user-active
         '401':
           description: Unauthorized - Missing or invalid token
           content:
