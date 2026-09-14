@@ -271,6 +271,22 @@ components:
         removed memberships or previous names. Deactivation does not clear memberships.
       example: [group-active]
 
+    BusinessRelationResponse:
+      type: object
+      description: |
+        Current person or company data. Assignment fields are omitted when unavailable,
+        never returned as null. Enabled client groups use an array, including [] when empty.
+        Null remains supported only in assignment request fields.
+      allOf:
+        - $ref: '#/components/schemas/BusinessRelation'
+      properties:
+        relationshipManager:
+          type: string
+        clientGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessRelationClientGroups/items'
+
     BusinessRelationUpdate:
       type: object
       description: |
@@ -372,6 +388,20 @@ components:
       type: object
       discriminator:
         propertyName: type
+        mapping:
+          Person: '#/components/schemas/PersonBusinessRelation'
+          Association: '#/components/schemas/CompanyBusinessRelation'
+          Company: '#/components/schemas/CompanyBusinessRelation'
+          Family: '#/components/schemas/CompanyBusinessRelation'
+          Foundation: '#/components/schemas/CompanyBusinessRelation'
+          Fund: '#/components/schemas/CompanyBusinessRelation'
+          Household: '#/components/schemas/CompanyBusinessRelation'
+          Insurance company: '#/components/schemas/CompanyBusinessRelation'
+          Insurance contract: '#/components/schemas/CompanyBusinessRelation'
+          Joint ownership: '#/components/schemas/CompanyBusinessRelation'
+          Partnership: '#/components/schemas/CompanyBusinessRelation'
+          Trust: '#/components/schemas/CompanyBusinessRelation'
+          Pension scheme: '#/components/schemas/CompanyBusinessRelation'
       oneOf:
         - $ref: '#/components/schemas/PersonBusinessRelation'
         - $ref: '#/components/schemas/CompanyBusinessRelation'
@@ -1436,12 +1466,14 @@ paths:
         - in: query
           name: pageSize
           required: false
-          description: Number of business relations to return per page (default 1000, max 5000)
+          description: >-
+            Number of business relations per page (max 5000). Supplying pageSize selects the
+            paginated envelope. Omit both pageSize and cursor to return the complete bare array.
+            When only cursor is supplied, the server uses 1000 records per page.
           schema:
             type: integer
             minimum: 1
             maximum: 5000
-            default: 1000
         - in: query
           name: cursor
           required: false
@@ -1457,7 +1489,7 @@ paths:
                 oneOf:
                   - type: array
                     items:
-                      $ref: '#/components/schemas/BusinessRelation'
+                      $ref: '#/components/schemas/BusinessRelationResponse'
                   - type: object
                     required:
                       - businessRelations
@@ -1465,7 +1497,7 @@ paths:
                       businessRelations:
                         type: array
                         items:
-                          $ref: '#/components/schemas/BusinessRelation'
+                          $ref: '#/components/schemas/BusinessRelationResponse'
                       nextCursor:
                         type: string
                         nullable: true
@@ -1488,7 +1520,7 @@ paths:
                         city: Warsaw
                         countryOfResidence: PL
                         language: EN
-                        birthDate: 1985-09-12
+                        birthDate: "1985-09-12"
                         placeOfBirth: Krakow
                         maritalStatus: Married
                         taxIdentificationNumber: PL1234567890
@@ -1627,7 +1659,7 @@ paths:
                   city: Warsaw
                   countryOfResidence: PL
                   language: EN
-                  birthDate: 1985-09-12
+                  birthDate: "1985-09-12"
                   wealthSource:
                     - salaries_remuneration
                     - financial_investments
@@ -1877,7 +1909,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BusinessRelation'
+                $ref: '#/components/schemas/BusinessRelationResponse'
               examples:
                 historicalAssignments:
                   summary: Current inactive assignments remain visible although absent from selectable schema values
@@ -1895,7 +1927,7 @@ paths:
                     city: Warsaw
                     countryOfResidence: PL
                     language: EN
-                    birthDate: 1985-09-12
+                    birthDate: "1985-09-12"
                     placeOfBirth: Krakow
                     maritalStatus: Married
                     taxIdentificationNumber: PL1234567890

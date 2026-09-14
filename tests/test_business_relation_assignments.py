@@ -29,9 +29,7 @@ def request_media(specification, path, method):
 
 
 def validate_relation_example(specification, example):
-  # Validate concrete types; the existing union has no discriminator mapping for Person/Company.
-  schema_name = "PersonBusinessRelation" if example["type"] == "Person" else "CompanyBusinessRelation"
-  schema = specification["components"]["schemas"][schema_name]
+  schema = specification["components"]["schemas"]["BusinessRelation"]
   errors = list(validator_for(specification, schema).iter_errors(example))
   assert not errors, [error.message for error in errors]
 
@@ -87,8 +85,10 @@ def test_assignment_request_examples_validate_fields(specification):
 
 def test_new_create_examples_validate_complete_payloads(specification):
   media = request_media(specification, "/v1.1/business-relations", "post")
-  for name in ("companyAssignments", "unassigned"):
-    validate_relation_example(specification, media["examples"][name]["value"])
+  validator = validator_for(specification, media["schema"])
+  for name, example in media["examples"].items():
+    errors = list(validator.iter_errors(example["value"]))
+    assert not errors, (name, [error.message for error in errors])
 
 
 def test_update_examples_validate_complete_operation_contract(specification):
@@ -125,6 +125,60 @@ def test_partial_update_preserves_field_validation(specification, payload, is_va
 def test_create_schema_still_requires_identity_fields(specification, schema_name):
   schema = specification["components"]["schemas"][schema_name]
   assert not validator_for(specification, schema).is_valid({"clientGroups": []})
+
+
+def test_discriminator_covers_existing_business_relation_types(specification):
+  schemas = specification["components"]["schemas"]
+  request_validator = validator_for(specification, schemas["BusinessRelation"])
+  response_validator = validator_for(specification, schemas["BusinessRelationResponse"])
+  for schema_name in ["PersonBusinessRelation", "CompanyBusinessRelation"]:
+    for relation_type in schemas[schema_name]["properties"]["type"]["enum"]:
+      relation = {"type": relation_type, "crmCode": "EXAMPLE", "name": "Example"}
+      if schema_name == "PersonBusinessRelation":
+        relation.update(firstName="Example", lastName="Person")
+      request_validator.validate(relation)
+      response_validator.validate(relation)
+
+
+@pytest.mark.parametrize("relation_type", ["Person", "Company"])
+@pytest.mark.parametrize("field,value,is_valid", [
+  ("relationshipManager", "user-active", True),
+  ("relationshipManager", None, False),
+  ("clientGroups", [], True),
+  ("clientGroups", ["group-active", "group-inactive"], True),
+  ("clientGroups", None, False),
+  ("clientGroups", [None], False),
+])
+def test_response_assignments_exclude_request_only_nulls(
+    specification, relation_type, field, value, is_valid):
+  relation = {"type": relation_type, "crmCode": "EXAMPLE", "name": "Example company"}
+  if relation_type == "Person":
+    relation.update(firstName="Example", lastName="Person")
+  single = response_media(specification, "/v1.1/business-relations/{crmCode}")
+  listed = response_media(specification, "/v1.1/business-relations")
+  single_validator = validator_for(specification, single["schema"])
+  list_validator = validator_for(specification, listed["schema"])
+  single_validator.validate(relation)
+  relation[field] = value
+  assert single_validator.is_valid(relation) == is_valid
+  assert list_validator.is_valid([relation]) == is_valid
+  assert list_validator.is_valid({"businessRelations": [relation]}) == is_valid
+
+
+def test_get_examples_validate_complete_operation_contract(specification):
+  for path in ["/v1.1/business-relations", "/v1.1/business-relations/{crmCode}"]:
+    media = response_media(specification, path)
+    validator = validator_for(specification, media["schema"])
+    for name, example in media["examples"].items():
+      errors = list(validator.iter_errors(example["value"]))
+      assert not errors, (path, name, [error.message for error in errors])
+
+
+def test_unpaginated_request_does_not_inject_page_size(specification):
+  parameters = specification["paths"]["/v1.1/business-relations"]["get"]["parameters"]
+  page_size = next(parameter for parameter in parameters if parameter["name"] == "pageSize")
+  assert not page_size.get("required", False)
+  assert "default" not in page_size["schema"]
 
 
 def test_new_get_examples_validate_both_list_shapes(specification):
