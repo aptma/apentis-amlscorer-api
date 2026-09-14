@@ -91,6 +91,42 @@ def test_new_create_examples_validate_complete_payloads(specification):
     validate_relation_example(specification, media["examples"][name]["value"])
 
 
+def test_update_examples_validate_complete_operation_contract(specification):
+  media = request_media(specification, "/v1.1/business-relations/{crmCode}", "put")
+  validator = validator_for(specification, media["schema"])
+  for name, example in media["examples"].items():
+    errors = list(validator.iter_errors(example["value"]))
+    assert not errors, (name, [error.message for error in errors])
+  validator.validate({})
+
+
+@pytest.mark.parametrize("payload,is_valid", [
+  ({"type": "Person", "relationshipManager": "user-active"}, True),
+  ({"type": "Company", "clientGroups": ["group-active"]}, True),
+  ({"type": "Trust", "clientGroups": None}, True),
+  ({"type": "Unknown"}, False),
+  ({"firstName": "Updated"}, True),
+  ({"firstName": []}, False),
+  ({"name": "Updated company"}, True),
+  ({"name": []}, False),
+  ({"incorporationDate": []}, False),
+  ({"relationshipManager": []}, False),
+  ({"relationshipManager": " "}, False),
+  ({"clientGroups": "group-active"}, False),
+  ({"clientGroups": [None]}, False),
+  ({"clientGroups": [""]}, False),
+])
+def test_partial_update_preserves_field_validation(specification, payload, is_valid):
+  media = request_media(specification, "/v1.1/business-relations/{crmCode}", "put")
+  assert validator_for(specification, media["schema"]).is_valid(payload) == is_valid
+
+
+@pytest.mark.parametrize("schema_name", ["PersonBusinessRelation", "CompanyBusinessRelation"])
+def test_create_schema_still_requires_identity_fields(specification, schema_name):
+  schema = specification["components"]["schemas"][schema_name]
+  assert not validator_for(specification, schema).is_valid({"clientGroups": []})
+
+
 def test_new_get_examples_validate_both_list_shapes(specification):
   media = response_media(specification, "/v1.1/business-relations")
   validator = validator_for(specification, media["schema"])

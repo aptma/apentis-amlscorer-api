@@ -271,6 +271,103 @@ components:
         removed memberships or previous names. Deactivation does not clear memberships.
       example: [group-active]
 
+    BusinessRelationUpdate:
+      type: object
+      description: |
+        Partial update of the relation identified by the crmCode path parameter.
+        All request properties are optional. Omitted properties retain their current values;
+        supplying type or repeating creation identity fields is not required.
+        Property validation reuses the existing person and company field definitions.
+      properties:
+        type:
+          anyOf:
+            - $ref: '#/components/schemas/PersonBusinessRelation/properties/type'
+            - $ref: '#/components/schemas/CompanyBusinessRelation/properties/type'
+        name:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/name'
+        firstName:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/firstName'
+        lastName:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/lastName'
+        maidenName:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/maidenName'
+        nationality:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/nationality'
+        fiscalCountry:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/fiscalCountry'
+        address:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/address'
+        postalCode:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/postalCode'
+        city:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/city'
+        countryOfResidence:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/countryOfResidence'
+        language:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/language'
+        birthDate:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/birthDate'
+        placeOfBirth:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/placeOfBirth'
+        phoneNumber:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/phoneNumber'
+        email:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/email'
+        relationshipStatus:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/relationshipStatus'
+        relationshipManager:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/relationshipManager'
+        clientGroups:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/clientGroups'
+        relationClassification:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/relationClassification'
+        relationStatus:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/relationStatus'
+        amlFrequency:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/amlFrequency'
+        crmId:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/crmId'
+        crmCode:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/crmCode'
+        service:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/service'
+        branch:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/branch'
+        maritalStatus:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/maritalStatus'
+        taxIdentificationNumber:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/taxIdentificationNumber'
+        industrySector:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/industrySector'
+        wealthSource:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/wealthSource'
+        bankAccountCountry:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/bankAccountCountry'
+        portfolioOverOneMillion:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/portfolioOverOneMillion'
+        originOfBusinessRelation:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/originOfBusinessRelation'
+        crsStatus:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/crsStatus'
+        dmsLinkUrl:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/dmsLinkUrl'
+        countryOfOperation:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/countryOfOperation'
+        incorporationDate:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/incorporationDate'
+        vatNumber:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/vatNumber'
+        complexityOfBoStructure:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/complexityOfBoStructure'
+        legalForm:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/legalForm'
+        listedCompany:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/listedCompany'
+        regulatedEntity:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/regulatedEntity'
+        stateOwnedEntity:
+          $ref: '#/components/schemas/CompanyBusinessRelation/properties/stateOwnedEntity'
+
     BusinessRelation:
       type: object
       discriminator:
@@ -1660,7 +1757,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BusinessRelation'
+              $ref: '#/components/schemas/BusinessRelationUpdate'
             examples:
               updateDetails:
                 summary: Omitted assignment fields preserve the current manager and memberships
