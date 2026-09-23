@@ -1533,7 +1533,7 @@ paths:
                         service:
                           - wealth_structuring
                         branch:
-                          - Apentis LU
+                          - apple-us
                         phoneNumber: "+48 123 456 789"
                         email: anna.nowak@example.com
                         relationshipStatus: Client
@@ -1560,7 +1560,7 @@ paths:
                         industrySector: k_financial_and_insurance_activities
                         complexityOfBoStructure: c_3_to_6_structure_level_in_eu_countries
                         branch:
-                          - Apentis FR
+                          - apple-fr
                         listedCompany: true
                         regulatedEntity: true
                         stateOwnedEntity: false
@@ -1670,7 +1670,8 @@ paths:
                   service:
                     - philanthropy_advisory
                   branch:
-                    - Apentis LU
+                    - apple-us
+                    - apple-fr
                   phoneNumber: '+48 123 456 789'
                   email: anna.nowak@example.com
                   relationshipStatus: Client
@@ -1801,7 +1802,7 @@ paths:
                   service:
                     - wealth_structuring
                   branch:
-                    - Apentis FR
+                    - apple-fr
               assignActiveReferences:
                 summary: Replace assignments with selectable active values
                 value:
@@ -1941,7 +1942,7 @@ paths:
                     service:
                       - wealth_structuring
                     branch:
-                      - Apentis LU
+                      - apple-us
                     phoneNumber: "+48 123 456 789"
                     email: anna.nowak@example.com
                     relationshipStatus: Client
