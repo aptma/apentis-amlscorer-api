@@ -124,7 +124,14 @@ def test_link_write_contracts_use_existing_schemas(spec):
     assert set(base["properties"]) == {"linkedCrmCode", "role", "uboType"}
     assert "uboType" not in base["required"]
     assert base["properties"]["uboType"]["nullable"] is True
-    assert base["properties"]["uboType"]["enum"] == ["DIRECT", "INDIRECT", "BOTH"]
+    assert base["properties"]["uboType"]["enum"] == ["DIRECT", "INDIRECT", "BOTH", None]
+    link = {"linkedCrmCode": "QA12375", "role": "Beneficial owner"}
+    check = validator(spec, base)
+    check.validate(link)
+    for ubo_type in ["DIRECT", "INDIRECT", "BOTH", None]:
+        check.validate({**link, "uboType": ubo_type})
+    for ubo_type in ["INVALID", "direct", "", True, 1]:
+        assert not check.is_valid({**link, "uboType": ubo_type})
     post = operations["post"]
     request = post["requestBody"]["content"]["application/json"]
     assert request["schema"]["items"] == {"$ref": "#/components/schemas/BusinessRelationLink"}

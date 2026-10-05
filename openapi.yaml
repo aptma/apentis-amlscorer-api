@@ -945,7 +945,7 @@ components:
         uboType:
           type: string
           nullable: true
-          enum: [DIRECT, INDIRECT, BOTH]
+          enum: [DIRECT, INDIRECT, BOTH, null]
           description: >-
             Optional descriptive UBO type for Beneficial owner links, including
             tenant aliases of that role. Omission or null stores no type; it is
