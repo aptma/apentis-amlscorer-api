@@ -799,6 +799,21 @@ components:
           maxLength: 2
           description: ISO 2-letter country code of the country that has issued the document (e.g., 'US', 'FR').
 
+    DocumentMetadataResponse:
+      description: Stored document metadata returned by GET, including its business status.
+      allOf:
+        - $ref: '#/components/schemas/DocumentMetadata'
+        - type: object
+          required:
+            - documentStatusId
+          properties:
+            documentStatusId:
+              type: string
+              readOnly: true
+              enum: [pending, validated, rejected, archived]
+              description: Stored business status ID, not a localized display name. Cannot be set or updated through either document POST endpoint.
+              example: validated
+
     DocumentFilePayload:
       type: object
       description: Binary payload of a stored document returned by the download endpoint.
@@ -926,6 +941,30 @@ components:
             - Member
             - Shareholder
           description: The role of the linked business relation in relation to the main one. Please see the GitBook documentation to see authorized links between entities.
+
+    BusinessRelationLinkResponse:
+      description: Link returned by GET, enriched with read-only classification and stored relation dates.
+      allOf:
+        - $ref: '#/components/schemas/BusinessRelationLink'
+        - type: object
+          required: [isActive, startDate, endDate]
+          properties:
+            isActive:
+              type: boolean
+              readOnly: true
+              description: Active according to the CRM UI date rule described on GET links; may include future-start links.
+            startDate:
+              type: string
+              format: date
+              nullable: true
+              readOnly: true
+              description: Stored relation start date in ISO YYYY-MM-DD format, or explicit null when absent. Never inferred from creation timestamps.
+            endDate:
+              type: string
+              format: date
+              nullable: true
+              readOnly: true
+              description: Stored exclusive relation end date in ISO YYYY-MM-DD format, or explicit null when absent. The link is historical on this date.
 
     BusinessRelationLinkDeleteRequest:
         type: array
@@ -1996,6 +2035,7 @@ paths:
   /v1.1/business-relations/{crmCode}/documents:
     post:
       summary: Upload one or more documents and associated metadata
+      description: documentStatusId is read-only. Supplying it cannot set or update the stored status; existing upload default status behavior is unchanged.
       tags:
         - KYC documents
       security:
@@ -2122,6 +2162,10 @@ paths:
         etc.), MIME type, size, and a base64-encoded payload that can be persisted to disk as PDF, JPEG, Word,
         etc.
 
+        Every entry includes documentStatusId (pending, validated, rejected or archived), the stored
+        business status ID rather than its localized name. Existing document selection is unchanged;
+        rejected and archived documents are not excluded by this addition.
+
         Use the `/v1.1/business-relations/{crmCode}/documents/metadata-only` GET endpoint when you only need the
         metadata without retrieving binary content.
       tags:
@@ -2144,7 +2188,7 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - $ref: '#/components/schemas/DocumentMetadata'
+                    - $ref: '#/components/schemas/DocumentMetadataResponse'
                     - type: object
                       required:
                         - contentType
@@ -2164,21 +2208,23 @@ paths:
                           description: Base64-encoded binary content of the document for direct retrieval via the API.
               example:
                 - documentName: "Passport - Anna Nowak"
-                  documentType: "passport"
+                  documentType: "Passport"
+                  documentStatusId: validated
                   hasPhysicalFile: true
                   issuanceDate: "2020-02-15"
                   expirationDate: "2030-02-14"
                   documentNumber: "PO1234567"
                   contentType: "application/pdf"
                   fileSizeBytes: 248123
-                  contentBase64: "JVBERi0xLjMKJcTl8uXrp..."
+                  contentBase64: "JVBERi0xLjMK"
                 - documentName: "Utility Bill January 2024"
-                  documentType: "utility_bill"
+                  documentType: "Proof of domicile"
+                  documentStatusId: archived
                   hasPhysicalFile: true
                   issuanceDate: "2024-01-31"
                   contentType: "application/pdf"
                   fileSizeBytes: 145892
-                  contentBase64: "JVBERi0xLjMKJcTl8uXrp..."
+                  contentBase64: "JVBERi0xLjMK"
         '401':
           description: Unauthorized - Missing or invalid token
           content:
@@ -2286,7 +2332,9 @@ paths:
       description: |
         Returns only the metadata of the documents stored for the specified business relation. Use this
         endpoint when you need to review document completeness, expiration dates, or issuers without
-        downloading the associated files.
+        downloading the associated files. Every entry includes the read-only documentStatusId
+        (pending, validated, rejected or archived), the stored ID rather than a localized name.
+        Existing selection is unchanged; rejected and archived documents are not excluded.
       tags:
         - KYC documents
       security:
@@ -2306,10 +2354,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DocumentMetadata'
+                  $ref: '#/components/schemas/DocumentMetadataResponse'
               example:
                 - documentName: "Passport - Anna Nowak"
                   documentType: "Passport"
+                  documentStatusId: validated
                   hasPhysicalFile: true
                   issuanceDate: "2020-04-10"
                   expirationDate: "2030-04-10"
@@ -2318,6 +2367,7 @@ paths:
                   documentIssuer: "PL"
                 - documentName: "Proof of domicile - Anna Nowak"
                   documentType: "Proof of domicile"
+                  documentStatusId: rejected
                   hasPhysicalFile: false
                   issuanceDate: "2024-01-05"
                   expirationDate: "2025-01-05"
@@ -2353,6 +2403,7 @@ paths:
                 code: 500
     post:
       summary: Submit document metadata without file
+      description: documentStatusId is read-only. Supplying it cannot set or update the stored status; existing default status behavior is unchanged.
       tags:
         - KYC documents
       security:
@@ -2422,6 +2473,28 @@ paths:
   /v1.1/business-relations/{crmCode}/links:
     get:
       summary: Retrieve business relation links
+      description: |
+        Returns primary-to-secondary links. Omitting isActive preserves the existing selection and
+        returns all stored links, enriched with isActive, startDate and endDate. true selects active
+        links; false selects historical links. Invalid values, including an empty value, return HTTP 400.
+
+        Classification matches the CRM UI. A link is active when BOTH conditions hold:
+        1. endDate is absent or strictly after today.
+        2. startDate or endDate is absent, or startDate is strictly before endDate.
+        Historical is the complete complement of this rule. The end date is exclusive: an end date
+        today or earlier is historical. Equal or reversed date periods are historical.
+        Both dates absent is active. A future start date remains active when no end date exists,
+        or when the end date is after today and strictly after the start date. There is no
+        "not yet started" classification or requirement that startDate be today or earlier.
+        Filtering and classification use one consistent reference date and the application's date convention.
+
+        Dates are stored relation dates in ISO YYYY-MM-DD format; missing dates are explicit null
+        and are never inferred or backfilled. Distinct stored periods for the same client and role
+        remain separate. Physically deleted links are absent; this is not a complete deletion audit.
+        Role/alias resolution, link direction, authentication and tenant isolation are unchanged.
+        These response-only fields do not change POST creation or its response, or DELETE behavior.
+        POST does not populate relation dates or accept caller-supplied classification as authoritative.
+        Example request: GET /v1.1/business-relations/{crmCode}/links?isActive=true
       tags:
         - Business relations links
       security:
@@ -2433,6 +2506,18 @@ paths:
           schema:
             type: string
           description: The CRM code of the primary business relation.
+        - in: query
+          name: isActive
+          required: false
+          allowEmptyValue: false
+          schema:
+            type: boolean
+          description: Omit to return all links; true returns only active links; false returns only historical links. Invalid or empty values return HTTP 400. No default filter is applied.
+          examples:
+            active:
+              value: true
+            historical:
+              value: false
       responses:
         '200':
           description: Links retrieved successfully
@@ -2447,16 +2532,55 @@ paths:
                   links:
                     type: array
                     items:
-                      $ref: '#/components/schemas/BusinessRelationLink'
-                example:
-                  status: success
-                  links:
-                    - linkedCrmCode: MZ001
-                      role: Director
-                    - linkedCrmCode: SH002
-                      role: Shareholder
+                      $ref: '#/components/schemas/BusinessRelationLinkResponse'
+              examples:
+                allLinks:
+                  summary: Unfiltered links, classified using reference date 2026-10-05
+                  value:
+                    status: success
+                    links:
+                      - linkedCrmCode: MZ001
+                        role: Director
+                        isActive: true
+                        startDate: '2025-01-15'
+                        endDate: null
+                      - linkedCrmCode: MZ001
+                        role: Director
+                        isActive: false
+                        startDate: '2024-01-01'
+                        endDate: '2026-10-05'
+                activeLinks:
+                  summary: isActive=true, including a future start (reference date 2026-10-05)
+                  value:
+                    status: success
+                    links:
+                      - linkedCrmCode: SH002
+                        role: Shareholder
+                        isActive: true
+                        startDate: '2027-01-01'
+                        endDate: '2028-01-01'
+                      - linkedCrmCode: MZ001
+                        role: Director
+                        isActive: true
+                        startDate: null
+                        endDate: null
+                historicalLinks:
+                  summary: isActive=false, including equal dates (reference date 2026-10-05)
+                  value:
+                    status: success
+                    links:
+                      - linkedCrmCode: SH002
+                        role: Shareholder
+                        isActive: false
+                        startDate: '2027-01-01'
+                        endDate: '2027-01-01'
+                emptyLinks:
+                  summary: No matching links
+                  value:
+                    status: success
+                    links: []
         '400':
-          description: Invalid input
+          description: Invalid input, including invalid or empty isActive filter values
           content:
             application/json:
               schema:
