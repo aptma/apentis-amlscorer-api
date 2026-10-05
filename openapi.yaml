@@ -942,6 +942,21 @@ components:
             - Shareholder
           description: The role of the linked business relation in relation to the main one. Please see the GitBook documentation to see authorized links between entities.
 
+        uboType:
+          type: string
+          nullable: true
+          enum: [DIRECT, INDIRECT, BOTH, null]
+          description: >-
+            Optional descriptive UBO type for Beneficial owner links, including
+            tenant aliases of that role. Omission or null stores no type; it is
+            never inferred as DIRECT. A non-null value on another role, or an
+            unsupported value, returns HTTP 400 before any link in the batch is
+            written. GET and linksCreated include the value when set and omit
+            it when null. The type does not change ownership thresholds,
+            potential-UBO matching, active classification or KYC counters.
+            POST keeps existing duplicate-link behavior and does not update
+            the type of a link it skips.
+
     BusinessRelationLinkResponse:
       description: Link returned by GET, enriched with read-only classification and stored relation dates.
       allOf:
