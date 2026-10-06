@@ -2514,7 +2514,6 @@ paths:
         These response-only fields do not change POST creation or its response, or DELETE behavior.
         POST does not populate relation dates or accept caller-supplied classification as authoritative.
         Beneficial owner links also return uboType when stored (DIRECT, INDIRECT or BOTH).
-        Unset UBO types are omitted, including legacy declarations; no type is inferred on retrieval.
         Example request: GET /v1.1/business-relations/{crmCode}/links?isActive=true
       tags:
         - Business relations links
@@ -2665,10 +2664,6 @@ paths:
         Beneficial owner links accept optional uboType: DIRECT, INDIRECT or BOTH (case-sensitive).
         Omission or explicit null stores no type and does not default to DIRECT. A populated type is
         supported only for the canonical Beneficial owner role or an alias resolving to that role.
-        Invalid types or populated types for another role return HTTP 400 before any batch member is
-        written. Duplicate links are not updated and retain their existing UBO type; POST is not an
-        endpoint for changing the type of an existing link. Newly created links return a populated
-        uboType in linksCreated; unset types are omitted. DELETE matching remains based on client and role.
       tags:
         - Business relations links
       security:
@@ -2739,7 +2734,7 @@ paths:
                     - linkedCrmCode: UBO004
                       role: Beneficial owner
         '400':
-          description: Invalid input, including invalid UBO types or a populated UBO type for another role; no batch member is written
+          description: Invalid input
           content:
             application/json:
               schema:
