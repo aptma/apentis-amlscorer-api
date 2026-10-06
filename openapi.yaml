@@ -955,7 +955,11 @@ components:
             it when null. The type does not change ownership thresholds,
             potential-UBO matching, active classification or KYC counters.
             POST keeps existing duplicate-link behavior and does not update
-            the type of a link it skips.
+            the type of a link it skips. DIRECT means direct ownership; INDIRECT
+            means ownership through intermediate entities; BOTH means direct and
+            indirect ownership. Values are case-sensitive. Legacy declarations
+            may have no stored type.
+          example: DIRECT
 
     BusinessRelationLinkResponse:
       description: Link returned by GET, enriched with read-only classification and stored relation dates.
@@ -2509,6 +2513,8 @@ paths:
         Role/alias resolution, link direction, authentication and tenant isolation are unchanged.
         These response-only fields do not change POST creation or its response, or DELETE behavior.
         POST does not populate relation dates or accept caller-supplied classification as authoritative.
+        Beneficial owner links also return uboType when stored (DIRECT, INDIRECT or BOTH).
+        Unset UBO types are omitted, including legacy declarations; no type is inferred on retrieval.
         Example request: GET /v1.1/business-relations/{crmCode}/links?isActive=true
       tags:
         - Business relations links
@@ -2589,6 +2595,34 @@ paths:
                         isActive: false
                         startDate: '2027-01-01'
                         endDate: '2027-01-01'
+                beneficialOwners:
+                  summary: Stored UBO types and an unclassified legacy declaration
+                  value:
+                    status: success
+                    links:
+                      - linkedCrmCode: UBO001
+                        role: Beneficial owner
+                        uboType: DIRECT
+                        isActive: true
+                        startDate: null
+                        endDate: null
+                      - linkedCrmCode: UBO002
+                        role: Beneficial owner
+                        uboType: INDIRECT
+                        isActive: true
+                        startDate: null
+                        endDate: null
+                      - linkedCrmCode: UBO003
+                        role: Beneficial owner
+                        uboType: BOTH
+                        isActive: true
+                        startDate: null
+                        endDate: null
+                      - linkedCrmCode: UBO004
+                        role: Beneficial owner
+                        isActive: true
+                        startDate: null
+                        endDate: null
                 emptyLinks:
                   summary: No matching links
                   value:
@@ -2627,6 +2661,14 @@ paths:
 
     post:
       summary: Link multiple business relations to a primary one
+      description: |
+        Beneficial owner links accept optional uboType: DIRECT, INDIRECT or BOTH (case-sensitive).
+        Omission or explicit null stores no type and does not default to DIRECT. A populated type is
+        supported only for the canonical Beneficial owner role or an alias resolving to that role.
+        Invalid types or populated types for another role return HTTP 400 before any batch member is
+        written. Duplicate links are not updated and retain their existing UBO type; POST is not an
+        endpoint for changing the type of an existing link. Newly created links return a populated
+        uboType in linksCreated; unset types are omitted. DELETE matching remains based on client and role.
       tags:
         - Business relations links
       security:
@@ -2651,6 +2693,18 @@ paths:
                 role: Director
               - linkedCrmCode: SH002
                 role: Shareholder
+              - linkedCrmCode: UBO001
+                role: Beneficial owner
+                uboType: DIRECT
+              - linkedCrmCode: UBO002
+                role: Beneficial owner
+                uboType: INDIRECT
+              - linkedCrmCode: UBO003
+                role: Beneficial owner
+                uboType: BOTH
+              - linkedCrmCode: UBO004
+                role: Beneficial owner
+                uboType: null
       responses:
         '201':
           description: Links created successfully
@@ -2673,8 +2727,19 @@ paths:
                       role: Director
                     - linkedCrmCode: SH002
                       role: Shareholder
+                    - linkedCrmCode: UBO001
+                      role: Beneficial owner
+                      uboType: DIRECT
+                    - linkedCrmCode: UBO002
+                      role: Beneficial owner
+                      uboType: INDIRECT
+                    - linkedCrmCode: UBO003
+                      role: Beneficial owner
+                      uboType: BOTH
+                    - linkedCrmCode: UBO004
+                      role: Beneficial owner
         '400':
-          description: Invalid input
+          description: Invalid input, including invalid UBO types or a populated UBO type for another role; no batch member is written
           content:
             application/json:
               schema:
