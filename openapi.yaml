@@ -2624,6 +2624,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:                
+                error: "Invalid input"
+                code: 400                
         '401':
           description: Unauthorized
           content:
@@ -2639,6 +2642,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:                
+                error: "Business relation not found"
+                code: 404                
         '500':
           description: Internal Server Error
           content:
@@ -2730,6 +2736,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:                
+                error: "Invalid input"
+                code: 400                   
         '401':
           description: Unauthorized
           content:
@@ -2819,6 +2828,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+              example:                
+                error: "Invalid input"
+                code: 400                   
         '401':
           description: Unauthorized
           content:
