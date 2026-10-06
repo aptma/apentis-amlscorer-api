@@ -957,8 +957,7 @@ components:
             POST keeps existing duplicate-link behavior and does not update
             the type of a link it skips. DIRECT means direct ownership; INDIRECT
             means ownership through intermediate entities; BOTH means direct and
-            indirect ownership. Values are case-sensitive. Legacy declarations
-            may have no stored type.
+            indirect ownership. Values are case-sensitive.
           example: DIRECT
 
     BusinessRelationLinkResponse:
