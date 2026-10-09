@@ -355,6 +355,8 @@ components:
           $ref: '#/components/schemas/PersonBusinessRelation/properties/taxIdentificationNumber'
         industrySector:
           $ref: '#/components/schemas/PersonBusinessRelation/properties/industrySector'
+        fundSource:
+          $ref: '#/components/schemas/PersonBusinessRelation/properties/fundSource'
         wealthSource:
           $ref: '#/components/schemas/PersonBusinessRelation/properties/wealthSource'
         bankAccountCountry:
@@ -527,6 +529,13 @@ components:
           description: >
             Industry sector classification for the person. Default values provided by Apentis include: a_agriculture_forestry_and_fishing, b_mining_and_quarrying, c_manufacturing, d_electricity_gas_steam_and_air_conditioning_supply, e_water_supply_sewerage_waste_management_and_remediation, f_construction, g_wholesale_and_retail_trade_motor_vehicles, h_transporting_and_storage, i_accommodation_and_food_service_activities, j_information_and_communication, k_financial_and_insurance_activities, l_real_estate_activities, m_professional_scientific_and_technical_activities, n_administrative_and_support_service_activities, o_public_administration_and_defence, p_education, q_human_health_and_social_work_activities, r_arts_entertainment_and_recreation, s_other_services_activities, t_households_as_employers_and_own_use_activities, u_extraterritorial_organisations_and_bodies. However, each client can configure its own list of acceptable values. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
           x-apentis-configurable: true          
+        fundSource:
+          type: array
+          description: >
+            Sources of funds used in transactions or the business relationship. Default values provided by Apentis include: entrepreneurial_activity, salaries_remuneration, inheritance, real_estate, financial_investments, donation_gifts_from_family, donation_gifts_from_others, divorce, loan_leverage, accumulated_profit, capital_from_shareholders, crypto_assets, company_sale_ma_exit,insurance_payout, pension_retirement_fund,litigation_compensation, lottery_gambling. However, each client can configure its own list of acceptable values. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
+          items:
+            type: string
         wealthSource:
           type: array
           description: >
@@ -687,6 +696,13 @@ components:
           type: string
           enum: [testamentary, SA, Sarl, SCA, SCS, SCSp, SCoSA, FCP, SICAV, SICAF, SCSp SICAV SIF, SAS, FR, FI]
           description: Legal form of the entity. Applicable for legal entities only.
+        fundSource:
+          type: array
+          description: >
+            Sources of funds used in transactions or the business relationship. Default values provided by Apentis include: entrepreneurial_activity, salaries_remuneration, inheritance, real_estate, financial_investments, donation_gifts_from_family, donation_gifts_from_others, divorce, loan_leverage, accumulated_profit, capital_from_shareholders, crypto_assets, company_sale_ma_exit,insurance_payout, pension_retirement_fund,litigation_compensation, lottery_gambling. However, each client can configure its own list of acceptable values. Use the endpoint `/v1.1/business-relations/schema-config` to retrieve the list configured for your organisation.
+          x-apentis-configurable: true
+          items:
+            type: string
         wealthSource:
           type: array
           description: >
@@ -1390,7 +1406,7 @@ paths:
       description: |
         Returns only the fields in the BusinessRelation object for which the list of allowed values is customized per client.
         
-        These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, wealth sources, etc.).
+        These fields typically represent drop-downs or tags that are configurable during onboarding (e.g. industry sectors, branches, fund sources, wealth sources, etc.).
 
         Standard fields with fixed values — such as gender, maritalStatus, or countryOfBirth — are not included in this response, 
         as their allowed values are predefined by Apentis and documented in the global OpenAPI schema.
@@ -1573,6 +1589,8 @@ paths:
                         placeOfBirth: Krakow
                         maritalStatus: Married
                         taxIdentificationNumber: PL1234567890
+                        fundSource:
+                          - salaries_remuneration
                         wealthSource:
                           - salaries_remuneration
                         bankAccountCountry: PL
@@ -1597,6 +1615,9 @@ paths:
                         registrationNumber: LU12345678
                         countryOfResidence: LU
                         countryOfOperation: LU
+                        fundSource:
+                          - accumulated_profit
+                          - company_sale_ma_exit
                         wealthSource:
                           - accumulated_profit
                           - company_sale_ma_exit
@@ -1709,9 +1730,11 @@ paths:
                   countryOfResidence: PL
                   language: EN
                   birthDate: "1985-09-12"
+                  fundSource:
+                    - inheritance
                   wealthSource:
+                    - entrepreneurial_activity
                     - salaries_remuneration
-                    - financial_investments
                   bankAccountCountry: PL
                   portfolioOverOneMillion: false
                   originOfBusinessRelation: prospection
@@ -1846,6 +1869,11 @@ paths:
                 value:
                   phoneNumber: "+352 456 789"
                   email: claire.lefebvre@client.eu
+                  fundSource:
+                    - real_estate
+                  wealthSource:
+                    - inheritance
+                    - salaries_remuneration
                   amlFrequency: one-time
                   originOfBusinessRelation: spontaneous_approach
                   service:
@@ -1981,6 +2009,9 @@ paths:
                     placeOfBirth: Krakow
                     maritalStatus: Married
                     taxIdentificationNumber: PL1234567890
+                    fundSource:
+                      - salaries_remuneration
+                      - real_estate
                     wealthSource:
                       - salaries_remuneration
                       - real_estate
