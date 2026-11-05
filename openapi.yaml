@@ -901,7 +901,8 @@ components:
         nextKycReviewDate:
           type: string
           format: date
-          description: Next full KYC review date calculated using the applicable AMLscorer settings and due-diligence rules.
+          nullable: true
+          description: Next full KYC review date calculated using the applicable AMLscorer settings and due-diligence rules for newly recorded reviews. An equal-date retry of a legacy approved full review without a stored deadline returns null without recalculating or repairing the deadline.
         kycStatus:
           type: string
           enum: [reviewed, to review]
@@ -3073,6 +3074,7 @@ paths:
       summary: Record a completed full KYC review for a business relation
       description: |
         Records a completed and approved full KYC review for the business relation, attributed to the authenticated customer's API identity.
+        Relations outside KYC scope are rejected with HTTP 409 before equal-date retry handling: Family/Mandate records, terminated relations, and ordinary Contacts outside ongoing monitoring.
         Provide reviewDate (YYYY-MM-DD, no later than today) and an optional comment; dates older than the latest full KYC review are rejected.
         Repeating the latest approved full-review date succeeds without changing the existing review or repeating its side effects; incompatible same-date reviews are rejected.
         Next KYC Review is calculated using existing AMLscorer rules, and current KYC status may remain To Review if the review is already due or overdue.
@@ -3157,14 +3159,22 @@ paths:
                 error: "Not Found - Business relation with specified crmCode not found"
                 code: 404
         '409':
-          description: Conflict - Review date precedes the latest full review or conflicts with an existing same-date review
+          description: Conflict - Business relation is not eligible for KYC review completion, review date precedes the latest full review, or an existing same-date review is incompatible
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-              example:
-                error: "Conflict - Review date precedes the latest full review or conflicts with an existing same-date review"
-                code: 409
+              examples:
+                reviewConflict:
+                  summary: Earlier date or incompatible same-date review
+                  value:
+                    error: "Conflict - Review date precedes the latest full review or conflicts with an existing same-date review"
+                    code: 409
+                ineligibleRelation:
+                  summary: Business relation is outside KYC scope
+                  value:
+                    error: "Conflict - Business relation is not eligible for KYC review completion"
+                    code: 409
         '429':
           description: Too Many Requests
           content:
