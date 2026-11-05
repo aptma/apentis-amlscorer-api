@@ -63,7 +63,7 @@ tags:
   - name: KYC documents
     description: Endpoints for uploading, retrieving, and managing KYC documents and metadata associated with a business relation.
   - name: AML/KYC results
-    description: Endpoints for retrieving AML/KYC assessments, including risk rating, acceptance status, PEP/sanction screening, and document completeness.
+    description: Endpoints for retrieving AML/KYC assessments and updating account status, including risk rating, acceptance status, PEP/sanction screening, and document completeness.
   - name: Cashflow monitoring
     description: Endpoints for submitting cash transactions and retrieving AML cashflow monitoring results.    
   - name: Investor commitments
@@ -853,6 +853,20 @@ components:
           format: byte
           description: Base64-encoded binary content of the document for direct retrieval via the API.
 
+    AmlAccountStatusUpdate:
+      type: object
+      additionalProperties: false
+      required:
+        - accountStatus
+      properties:
+        accountStatus:
+          $ref: '#/components/schemas/AmlKycResult/properties/accountStatus'
+        blockingReason:
+          type: string
+          nullable: true
+          enum: [account_opening_pending_approval, aml_escalation_suspicious, aml_review_pending, expired_kyc, fiu_regulatory_request, fraud, legal, missing_documents, tax_non_compliance, null]
+          description: Optional blocking-reason code. Omission or null clears the previous reason. Active always clears the reason; any supplied code must still be valid.
+
     AmlKycResult:
       type: object
       properties:
@@ -870,12 +884,12 @@ components:
           description: Indicates the internal decision regarding the acceptance of the business relation following the AML assessment.
         accountStatus:
           type: string
-          enum: [active, soft blocked, hard blocked]
+          enum: [Active, Soft blocked, Hard blocked]
           description: Shows the operational status of the client’s account based on AML findings and internal controls.
         blockingReason:
           type: string
           enum: [account_opening_pending_approval, aml_escalation_suspicious, aml_review_pending, expired_kyc, fiu_regulatory_request, fraud, legal, missing_documents, tax_non_compliance]
-          description: Optional reason for account blocking; applicable only when accountStatus is soft blocked or hard blocked.
+          description: Optional reason for account blocking; applicable only when accountStatus is Soft blocked or Hard blocked.
         nbrHits:
           type: integer
           format: int32
@@ -2881,6 +2895,139 @@ paths:
                 error: "Internal Server Error"
                 code: 500
 
+  /v1.1/business-relations/{crmCode}/aml-account-status:
+    put:
+      summary: Update AML account status for a business relation
+      description: |
+        Replaces the account status and optional blocking reason on the latest applicable AML
+        assessment for the business relation in the authenticated customer. All transitions between
+        supported statuses are allowed. Historical and future-dated assessments remain unchanged.
+
+        Omitted or null blockingReason clears the previous reason. Active always clears the reason,
+        even when a valid reason is supplied. Unknown fields, statuses and reason codes are rejected.
+        Repeating the same resulting values succeeds without creating another business-change audit entry.
+        Effective changes are audited with the previous and new values and the API source.
+
+        This operation does not validate the AML assessment, change AML/KYC review data, risk scoring,
+        relation acceptance or CRM relation status, or trigger screening. It does not make these fields
+        read-only in AMLscorer. Existing order-blocking policies continue to apply to the updated status.
+      tags:
+        - AML/KYC results
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmlAccountStatusUpdate'
+            examples:
+              blockWithReason:
+                summary: Hard block with a blocking reason
+                value:
+                  accountStatus: Hard blocked
+                  blockingReason: missing_documents
+              blockWithoutReason:
+                summary: Soft block and clear any previous reason
+                value:
+                  accountStatus: Soft blocked
+              activate:
+                summary: Activate and clear any previous reason
+                value:
+                  accountStatus: Active
+      responses:
+        '200':
+          description: Account status updated successfully, or already unchanged
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - crmCode
+                  - accountStatus
+                  - blockingReason
+                properties:
+                  crmCode:
+                    type: string
+                  accountStatus:
+                    $ref: '#/components/schemas/AmlAccountStatusUpdate/properties/accountStatus'
+                  blockingReason:
+                    $ref: '#/components/schemas/AmlAccountStatusUpdate/properties/blockingReason'
+              example:
+                crmCode: EXAMPLE-001
+                accountStatus: Hard blocked
+                blockingReason: missing_documents
+        '400':
+          description: Bad Request - Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid input"
+                code: 400
+        '401':
+          description: Unauthorized - Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '403':
+          description: Forbidden - IP address not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Forbidden - IP address not authorized"
+                code: 403
+        '404':
+          description: Not Found - Business relation with specified crmCode not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
+        '409':
+          description: Conflict - No applicable AML assessment exists; no assessment is created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Conflict - No applicable AML assessment exists"
+                code: 409
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Too Many Requests"
+                code: 429
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
+
   /v1.1/business-relations/{crmCode}/aml-kyc-result:
     get:
       summary: Retrieve AML/KYC results for a business relation
@@ -2906,7 +3053,7 @@ paths:
                 amlRiskRating: low
                 dueDiligenceType: standard
                 relationAcceptanceStatus: approved
-                accountStatus: active
+                accountStatus: Active
                 nbrHits: 2
                 nbrArticles: 1
                 isPep: false
