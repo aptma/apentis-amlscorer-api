@@ -63,7 +63,7 @@ tags:
   - name: KYC documents
     description: Endpoints for uploading, retrieving, and managing KYC documents and metadata associated with a business relation.
   - name: AML/KYC results
-    description: Endpoints for retrieving AML/KYC assessments and updating account status, including risk rating, acceptance status, PEP/sanction screening, and document completeness.
+    description: Endpoints for retrieving AML/KYC assessments, updating account status, and recording completed KYC reviews, including risk rating, acceptance status, PEP/sanction screening, and document completeness.
   - name: Cashflow monitoring
     description: Endpoints for submitting cash transactions and retrieving AML cashflow monitoring results.    
   - name: Investor commitments
@@ -867,6 +867,46 @@ components:
           enum: [account_opening_pending_approval, aml_escalation_suspicious, aml_review_pending, expired_kyc, fiu_regulatory_request, fraud, legal, missing_documents, tax_non_compliance, null]
           description: Optional blocking-reason code. Omission or null clears the previous reason. Active always clears the reason; any supplied code must still be valid.
 
+    KycReviewRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - reviewDate
+      properties:
+        reviewDate:
+          type: string
+          format: date
+          pattern: '^\d{4}-\d{2}-\d{2}$'
+          description: Date the full KYC review was completed and approved (YYYY-MM-DD). Must be a valid calendar date no later than today; timestamps and null are not accepted.
+        comment:
+          type: string
+          nullable: true
+          description: Optional review context or migration reference. Omission or null means no comment.
+
+    KycReviewResponse:
+      type: object
+      required:
+        - crmCode
+        - reviewDate
+        - nextKycReviewDate
+        - kycStatus
+      properties:
+        crmCode:
+          type: string
+          description: Unique external identifier of the business relation.
+        reviewDate:
+          type: string
+          format: date
+          description: Date of the recorded full KYC review (YYYY-MM-DD).
+        nextKycReviewDate:
+          type: string
+          format: date
+          description: Next full KYC review date calculated using the applicable AMLscorer settings and due-diligence rules.
+        kycStatus:
+          type: string
+          enum: [reviewed, to review]
+          description: Current KYC status. An approved historical review can already be due or overdue under existing reset rules.
+
     AmlKycResult:
       type: object
       properties:
@@ -918,7 +958,7 @@ components:
         lastKycReviewDate:
           type: string
           format: date
-          description: Date of the most recent KYC review (YYYY-MM-DD).
+          description: Date of the most recent full KYC review (YYYY-MM-DD), excluding SDD eligibility reviews.
         nextKycReviewDate:
           type: string
           format: date
@@ -3008,6 +3048,122 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
                 error: "Conflict - No applicable AML assessment exists"
+                code: 409
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Too Many Requests"
+                code: 429
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal Server Error"
+                code: 500
+
+  /v1.1/business-relations/{crmCode}/kyc-reviews:
+    post:
+      summary: Record a completed full KYC review for a business relation
+      description: |
+        Records a completed and approved full KYC review for the business relation, attributed to the authenticated customer's API identity.
+        Provide reviewDate (YYYY-MM-DD, no later than today) and an optional comment; dates older than the latest full KYC review are rejected.
+        Repeating the latest approved full-review date succeeds without changing the existing review or repeating its side effects; incompatible same-date reviews are rejected.
+        Next KYC Review is calculated using existing AMLscorer rules, and current KYC status may remain To Review if the review is already due or overdue.
+        Existing KYC/AML workflows still apply, but pending documents are not finalized or validated and fields are not made read-only.
+      tags:
+        - AML/KYC results
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: crmCode
+          required: true
+          schema:
+            type: string
+          description: Unique external identifier of the business relation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KycReviewRequest'
+            example:
+              reviewDate: "2026-10-15"
+              comment: Full KYC review completed in Olympic.
+      responses:
+        '201':
+          description: Full KYC review recorded successfully; the example deadline assumes a 12-month frequency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycReviewResponse'
+              example:
+                crmCode: EXAMPLE-001
+                reviewDate: "2026-10-15"
+                nextKycReviewDate: "2027-10-15"
+                kycStatus: reviewed
+        '200':
+          description: Approved full KYC review already exists for this date; returns the existing review and current KYC status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KycReviewResponse'
+              example:
+                crmCode: EXAMPLE-001
+                reviewDate: "2026-10-15"
+                nextKycReviewDate: "2027-10-15"
+                kycStatus: to review
+        '400':
+          description: Bad Request - Invalid fields or review date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Bad Request - Invalid fields or review date"
+                code: 400
+        '401':
+          description: Unauthorized - Missing or invalid token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Unauthorized - Missing or invalid token"
+                code: 401
+        '403':
+          description: Forbidden - IP address not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Forbidden - IP address not authorized"
+                code: 403
+        '404':
+          description: Not Found - Business relation with specified crmCode not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Not Found - Business relation with specified crmCode not found"
+                code: 404
+        '409':
+          description: Conflict - Review date precedes the latest full review or conflicts with an existing same-date review
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Conflict - Review date precedes the latest full review or conflicts with an existing same-date review"
                 code: 409
         '429':
           description: Too Many Requests
